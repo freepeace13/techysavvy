@@ -3,10 +3,12 @@
 namespace Techysavvy\DropShare;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Techysavvy\Core\ToolRegistry;
+use Techysavvy\DropShare\Console\PruneExpiredFilesCommand;
 
 class DropShareServiceProvider extends ServiceProvider
 {
@@ -22,5 +24,17 @@ class DropShareServiceProvider extends ServiceProvider
 
         RateLimiter::for('drop-share-uploads', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
         RateLimiter::for('drop-share-downloads', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([PruneExpiredFilesCommand::class]);
+        }
+
+        $this->app->booted(function () {
+            $interval = max(1, (int) config('drop-share.prune_interval_minutes'));
+
+            $this->app->make(Schedule::class)
+                ->command(PruneExpiredFilesCommand::class)
+                ->cron("*/{$interval} * * * *");
+        });
     }
 }
