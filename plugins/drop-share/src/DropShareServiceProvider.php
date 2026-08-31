@@ -13,6 +13,7 @@ class DropShareServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'drop-share');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->app->make(ToolRegistry::class)->register(new DropShareTool());
     }
