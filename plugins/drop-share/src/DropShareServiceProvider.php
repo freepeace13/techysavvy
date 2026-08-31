@@ -2,6 +2,9 @@
 
 namespace Techysavvy\DropShare;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Techysavvy\Core\ToolRegistry;
 
@@ -16,5 +19,7 @@ class DropShareServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->app->make(ToolRegistry::class)->register(new DropShareTool());
+
+        RateLimiter::for('drop-share-uploads', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
     }
 }
