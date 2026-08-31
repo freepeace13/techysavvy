@@ -24,3 +24,5 @@ host/database/database.sqlite
 
 plugins/*/vendor
 plugins/*/node_modules
+plugins/*/.phpunit.cache
+plugins/*/.phpunit.result.cache

@@ -1,0 +1,44 @@
+{
+    "name": "techysavvy/drop-share",
+    "description": "Upload a file, get a phrase, share it — auto-deletes after expiry.",
+    "type": "library",
+    "version": "1.0.0",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0",
+        "techysavvy/core": "*",
+        "techysavvy/ui": "*",
+        "drenso/genphrase": "^2.2"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.2",
+        "phpunit/phpunit": "^12.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Techysavvy\\DropShare\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Techysavvy\\DropShare\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techysavvy\\DropShare\\DropShareServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

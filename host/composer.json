@@ -20,7 +20,8 @@
         "laravel/tinker": "^3.0",
         "techysavvy/ui": "*",
         "techysavvy/core": "*",
-        "techysavvy/hello-tool": "*"
+        "techysavvy/hello-tool": "*",
+        "techysavvy/drop-share": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
