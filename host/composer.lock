@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6318c1324029c77af137e68513ef3ad6",
+    "content-hash": "c53882107e9d043737d523c6a8e1bd71",
     "packages": [
         {
             "name": "brick/math",
@@ -5820,18 +5820,52 @@
             "time": "2026-08-30T20:10:55+00:00"
         },
         {
+            "name": "techysavvy/core",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "../plugins/core",
+                "reference": "003e9cbf4c450107b8fec74b72fc349ada1230a6"
+            },
+            "require": {
+                "illuminate/support": "^13.0",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Techysavvy\\Core\\CoreServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Techysavvy\\Core\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "ToolContract interface and ToolRegistry used by the host app and every tool plugin to discover installed tools.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "techysavvy/hello-tool",
             "version": "1.0.0",
             "dist": {
                 "type": "path",
                 "url": "../plugins/hello-tool",
-                "reference": "49bc7c73c6370a16b428716ed40cd807a19ee77d"
+                "reference": "6115ea5c36a05996da0b162bf2d3c379d53a5876"
             },
             "require": {
                 "illuminate/support": "^13.0",
                 "php": "^8.3",
-                "techysavvy/shared-ui": "*",
-                "techysavvy/tool-registry": "*"
+                "techysavvy/core": "*",
+                "techysavvy/ui": "*"
             },
             "type": "library",
             "extra": {
@@ -5853,12 +5887,12 @@
             }
         },
         {
-            "name": "techysavvy/shared-ui",
+            "name": "techysavvy/ui",
             "version": "1.0.0",
             "dist": {
                 "type": "path",
-                "url": "../plugins/shared-ui",
-                "reference": "fd1ad183808fcffc4b5161e2f5af2f3c4702af85"
+                "url": "../plugins/ui",
+                "reference": "1c62386e2cc5a7d510c7ac14b40f8cd6dae6cbbd"
             },
             "require": {
                 "illuminate/support": "^13.0",
@@ -5868,53 +5902,19 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Techysavvy\\SharedUi\\SharedUiServiceProvider"
+                        "Techysavvy\\Ui\\UiServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Techysavvy\\SharedUi\\": "src/"
+                    "Techysavvy\\Ui\\": "src/"
                 }
             },
             "license": [
                 "proprietary"
             ],
             "description": "Shared branding assets and generic UI components for the host app and every tool plugin.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "techysavvy/tool-registry",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "../plugins/tool-registry",
-                "reference": "e7b5303dd0eb76f4cc408464c884bb3065773375"
-            },
-            "require": {
-                "illuminate/support": "^13.0",
-                "php": "^8.3"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Techysavvy\\ToolRegistry\\ToolRegistryServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Techysavvy\\ToolRegistry\\": "src/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "description": "ToolContract interface and ToolRegistry used by the host app and every tool plugin to discover installed tools.",
             "transport-options": {
                 "symlink": true,
                 "relative": true

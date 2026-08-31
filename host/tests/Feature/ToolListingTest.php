@@ -2,25 +2,40 @@
 
 namespace Tests\Feature;
 
+use Techysavvy\Core\ToolRegistry;
 use Tests\TestCase;
 
 class ToolListingTest extends TestCase
 {
-    public function test_home_page_lists_registered_tools(): void
+    /**
+     * Deliberately plugin-agnostic: asserts over whatever is currently in
+     * the ToolRegistry rather than naming a specific tool, so this test
+     * doesn't need editing (and can't go stale) when a plugin is added
+     * or removed. Plugin-specific assertions belong in that plugin's own
+     * tests, not here.
+     */
+    public function test_home_page_lists_every_registered_tool(): void
     {
-        $response = $this->get('/');
+        $tools = $this->app->make(ToolRegistry::class)->all();
 
+        $this->assertNotEmpty($tools, 'Expected at least one tool to be registered.');
+
+        $response = $this->get('/');
         $response->assertOk();
-        $response->assertSee('Hello Tool');
-        $response->assertSee('Demo plugin proving a tool can register itself and boot end-to-end.');
-        $response->assertSee(route('hello-tool.home'), escape: false);
+
+        foreach ($tools as $tool) {
+            $response->assertSee($tool->name());
+            $response->assertSee($tool->description());
+            $response->assertSee($tool->url(), escape: false);
+        }
     }
 
-    public function test_tool_card_link_navigates_to_the_tools_own_route(): void
+    public function test_every_registered_tools_own_route_responds(): void
     {
-        $response = $this->get(route('hello-tool.home'));
+        $tools = $this->app->make(ToolRegistry::class)->all();
 
-        $response->assertOk();
-        $response->assertSee('Hello Tool');
+        foreach ($tools as $tool) {
+            $this->get($tool->url())->assertOk();
+        }
     }
 }

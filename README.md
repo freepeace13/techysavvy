@@ -8,8 +8,8 @@ A Laravel monorepo: a thin bootstrapper app (`host/`) that discovers and hosts s
 techysavvy/
 ├── host/                     # the only runnable Laravel application
 ├── plugins/
-│   ├── shared-ui/            # branding + generic Blade UI components
-│   ├── tool-registry/        # ToolContract interface + ToolRegistry
+│   ├── ui/                   # branding + generic Blade UI components
+│   ├── core/                 # ToolContract interface + ToolRegistry
 │   └── <tool-name>/          # one folder per tool
 └── issues/prd.md             # spec for this bootstrap
 ```
@@ -19,9 +19,9 @@ Full rationale and decisions: [`issues/prd.md`](issues/prd.md).
 ## How it works
 
 - Each `plugins/<name>/` folder is a standalone Composer package (own `composer.json`, own `ServiceProvider`), wired into `host/` via a Composer path repository (`../plugins/*`).
-- A plugin registers itself by implementing `Techysavvy\ToolRegistry\ToolContract` (`icon()`, `name()`, `description()`, `url()`) and, in its own `ServiceProvider::boot()`, pushing an instance of that class into the `ToolRegistry` singleton.
+- A plugin registers itself by implementing `Techysavvy\Core\ToolContract` (`icon()`, `name()`, `description()`, `url()`) and, in its own `ServiceProvider::boot()`, pushing an instance of that class into the `ToolRegistry` singleton.
 - `host/`'s home page reads `ToolRegistry::all()` and renders a card per tool — it never references a plugin's classes directly.
-- Branding and generic UI (layout shell, tool grid, tool card) live in `plugins/shared-ui` and are consumed by `host/` and every plugin the same way.
+- Branding and generic UI (layout shell, tool grid, tool card) live in `plugins/ui` and are consumed by `host/` and every plugin the same way.
 
 `plugins/hello-tool` is a working reference plugin — copy its shape when starting a new tool.
 

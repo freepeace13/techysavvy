@@ -2,7 +2,7 @@
 
 namespace Techysavvy\HelloTool;
 
-use Techysavvy\ToolRegistry\ToolContract;
+use Techysavvy\Core\ToolContract;
 
 class HelloTool implements ToolContract
 {

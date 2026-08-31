@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\View\View;
-use Techysavvy\ToolRegistry\ToolRegistry;
+use Techysavvy\Core\ToolRegistry;
 
 class HomeController extends Controller
 {

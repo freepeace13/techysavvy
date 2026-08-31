@@ -6,8 +6,8 @@
     "require": {
         "php": "^8.3",
         "illuminate/support": "^13.0",
-        "techysavvy/tool-registry": "*",
-        "techysavvy/shared-ui": "*"
+        "techysavvy/core": "*",
+        "techysavvy/ui": "*"
     },
     "autoload": {
         "psr-4": {

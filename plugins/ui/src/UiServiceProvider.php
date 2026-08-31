@@ -1,10 +1,10 @@
 <?php
 
-namespace Techysavvy\SharedUi;
+namespace Techysavvy\Ui;
 
 use Illuminate\Support\ServiceProvider;
 
-class SharedUiServiceProvider extends ServiceProvider
+class UiServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {

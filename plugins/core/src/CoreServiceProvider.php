@@ -1,10 +1,10 @@
 <?php
 
-namespace Techysavvy\ToolRegistry;
+namespace Techysavvy\Core;
 
 use Illuminate\Support\ServiceProvider;
 
-class ToolRegistryServiceProvider extends ServiceProvider
+class CoreServiceProvider extends ServiceProvider
 {
     public function register(): void
     {

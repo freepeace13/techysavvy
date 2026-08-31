@@ -1,6 +1,6 @@
 <?php
 
-namespace Techysavvy\ToolRegistry;
+namespace Techysavvy\Core;
 
 use Illuminate\Support\Collection;
 

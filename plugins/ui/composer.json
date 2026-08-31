@@ -1,5 +1,5 @@
 {
-    "name": "techysavvy/shared-ui",
+    "name": "techysavvy/ui",
     "description": "Shared branding assets and generic UI components for the host app and every tool plugin.",
     "type": "library",
     "version": "1.0.0",
@@ -10,13 +10,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Techysavvy\\SharedUi\\": "src/"
+            "Techysavvy\\Ui\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Techysavvy\\SharedUi\\SharedUiServiceProvider"
+                "Techysavvy\\Ui\\UiServiceProvider"
             ]
         }
     },

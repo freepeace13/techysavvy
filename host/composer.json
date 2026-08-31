@@ -18,8 +18,8 @@
         "php": "^8.3",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
-        "techysavvy/shared-ui": "*",
-        "techysavvy/tool-registry": "*",
+        "techysavvy/ui": "*",
+        "techysavvy/core": "*",
         "techysavvy/hello-tool": "*"
     },
     "require-dev": {

@@ -3,7 +3,7 @@
 namespace Techysavvy\HelloTool;
 
 use Illuminate\Support\ServiceProvider;
-use Techysavvy\ToolRegistry\ToolRegistry;
+use Techysavvy\Core\ToolRegistry;
 
 class HelloToolServiceProvider extends ServiceProvider
 {
