@@ -3,6 +3,15 @@
     "description": "Upload a file, get a phrase, share it — auto-deletes after expiry.",
     "type": "library",
     "version": "1.0.0",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
         "php": "^8.3",
         "illuminate/support": "^13.0",
