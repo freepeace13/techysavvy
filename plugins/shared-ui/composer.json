@@ -1,0 +1,24 @@
+{
+    "name": "techysavvy/shared-ui",
+    "description": "Shared branding assets and generic UI components for the host app and every tool plugin.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Techysavvy\\SharedUi\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techysavvy\\SharedUi\\SharedUiServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

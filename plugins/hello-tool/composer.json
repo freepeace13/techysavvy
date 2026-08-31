@@ -1,0 +1,25 @@
+{
+    "name": "techysavvy/hello-tool",
+    "description": "Demo tool plugin — reference implementation for the plugin folder shape.",
+    "type": "library",
+    "version": "1.0.0",
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0",
+        "techysavvy/tool-registry": "*",
+        "techysavvy/shared-ui": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Techysavvy\\HelloTool\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techysavvy\\HelloTool\\HelloToolServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

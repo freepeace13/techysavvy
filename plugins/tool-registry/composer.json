@@ -1,0 +1,24 @@
+{
+    "name": "techysavvy/tool-registry",
+    "description": "ToolContract interface and ToolRegistry used by the host app and every tool plugin to discover installed tools.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Techysavvy\\ToolRegistry\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techysavvy\\ToolRegistry\\ToolRegistryServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}
