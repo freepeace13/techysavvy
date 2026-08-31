@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c53882107e9d043737d523c6a8e1bd71",
+    "content-hash": "eed6869f3c7377b6fb819e0a25d55830",
     "packages": [
         {
             "name": "brick/math",
@@ -439,6 +439,57 @@
                 }
             ],
             "time": "2025-10-31T18:51:33+00:00"
+        },
+        {
+            "name": "drenso/genphrase",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Drenso/GenPhrase.git",
+                "reference": "7cece52964fa5aa43d6f4ae4faeffb4410effad2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Drenso/GenPhrase/zipball/7cece52964fa5aa43d6f4ae4faeffb4410effad2",
+                "reference": "7cece52964fa5aa43d6f4ae4faeffb4410effad2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "ext-mbstring": "*",
+                "ext-random": "*",
+                "php": ">=8.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "3.68.3",
+                "phpstan/phpstan": "2.1.2",
+                "phpunit/phpunit": "11.5.6",
+                "rector/rector": "2.0.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Drenso\\GenPhrase\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Secure passphrase generator for PHP applications",
+            "homepage": "https://github.com/timoh6/GenPhrase",
+            "keywords": [
+                "diceware",
+                "generator",
+                "passphrase",
+                "password",
+                "random",
+                "secure"
+            ],
+            "support": {
+                "source": "https://github.com/Drenso/GenPhrase/tree/v2.2.0"
+            },
+            "time": "2025-02-13T11:14:35+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -5848,6 +5899,49 @@
                 "proprietary"
             ],
             "description": "ToolContract interface and ToolRegistry used by the host app and every tool plugin to discover installed tools.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "techysavvy/drop-share",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "../plugins/drop-share",
+                "reference": "7e6777d74aff09ee87af2d2ad47e1b2e999803b2"
+            },
+            "require": {
+                "drenso/genphrase": "^2.2",
+                "illuminate/support": "^13.0",
+                "php": "^8.3",
+                "techysavvy/core": "*",
+                "techysavvy/ui": "*"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^11.2",
+                "phpunit/phpunit": "^12.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Techysavvy\\DropShare\\DropShareServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Techysavvy\\DropShare\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Techysavvy\\DropShare\\Tests\\": "tests/"
+                }
+            },
+            "description": "Upload a file, get a phrase, share it — auto-deletes after expiry.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
