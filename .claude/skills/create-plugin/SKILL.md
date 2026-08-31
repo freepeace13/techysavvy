@@ -14,7 +14,7 @@ A plugin is "done" only when it shows up as a card on the host home page (`/`) �
 ## Inputs
 
 - **Name given explicitly** ("call it word-counter" / "Word Counter tool") → use it.
-- **No name given, only a spec/prompt** ("a tool that counts words in pasted text") → derive a short, literal name from what the tool *does* (2-3 words max). Don't invent scope beyond the spec.
+- **No name given, only a spec/prompt** ("a tool that counts words in pasted text") → propose 2-3 candidate names (short, easy to remember, clearly matching the tool's description — 2-3 words max, no invented scope beyond the spec) and let the user pick before scaffolding anything.
 
 From the chosen name, derive every casing you'll need:
 
