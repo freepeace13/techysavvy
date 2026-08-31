@@ -9,6 +9,8 @@ class DropShareServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/drop-share.php', 'drop-share');
+
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'drop-share');
 
