@@ -21,5 +21,6 @@ class DropShareServiceProvider extends ServiceProvider
         $this->app->make(ToolRegistry::class)->register(new DropShareTool());
 
         RateLimiter::for('drop-share-uploads', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+        RateLimiter::for('drop-share-downloads', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
     }
 }
