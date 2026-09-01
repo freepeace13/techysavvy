@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaf6b1b916a8f634e416b8719ef8d029",
+    "content-hash": "da175b12ef141649ff48f4cbc7fff460",
     "packages": [
         {
             "name": "brick/math",
@@ -1107,16 +1107,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v13.29.0",
+            "version": "v13.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "6e2c363716964d8238cee7097b258119a984f0cf"
+                "reference": "9c008e7c9a64a8ea6d6e4f1683bd569acc10bf9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/6e2c363716964d8238cee7097b258119a984f0cf",
-                "reference": "6e2c363716964d8238cee7097b258119a984f0cf",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/9c008e7c9a64a8ea6d6e4f1683bd569acc10bf9e",
+                "reference": "9c008e7c9a64a8ea6d6e4f1683bd569acc10bf9e",
                 "shasum": ""
             },
             "require": {
@@ -1330,7 +1330,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-08-25T20:57:16+00:00"
+            "time": "2026-09-01T13:19:00+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -5876,11 +5876,11 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/core",
-                "reference": "003e9cbf4c450107b8fec74b72fc349ada1230a6"
+                "reference": "e3858d2735c73945709e5613e4bf3ea79d845c03"
             },
             "require": {
                 "illuminate/support": "^13.0",
-                "php": "^8.3"
+                "php": "^8.4"
             },
             "type": "library",
             "extra": {
@@ -5910,12 +5910,12 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/drop-share",
-                "reference": "c2394d88462a7e3762239229ebb470f2d52ff51f"
+                "reference": "7de70b85e6827e61a3caee2430cfae01d179a229"
             },
             "require": {
                 "drenso/genphrase": "^2.2",
                 "illuminate/support": "^13.0",
-                "php": "^8.3",
+                "php": "^8.4",
                 "techysavvy/core": "*",
                 "techysavvy/ui": "*"
             },
@@ -5953,11 +5953,11 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/hello-tool",
-                "reference": "6115ea5c36a05996da0b162bf2d3c379d53a5876"
+                "reference": "da721394ded9e328e6b143a571c91e00a56ecfbb"
             },
             "require": {
                 "illuminate/support": "^13.0",
-                "php": "^8.3",
+                "php": "^8.4",
                 "techysavvy/core": "*",
                 "techysavvy/ui": "*"
             },
@@ -5986,11 +5986,11 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/photo-tweaker",
-                "reference": "eb17decb2d543bda138e87aa87c7ae0d6588a495"
+                "reference": "d90393b75b50c93cb14dc5859f71fd829fa2a9cc"
             },
             "require": {
                 "illuminate/support": "^13.0",
-                "php": "^8.3",
+                "php": "^8.4",
                 "techysavvy/core": "*",
                 "techysavvy/ui": "*"
             },
@@ -6019,11 +6019,11 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/ui",
-                "reference": "1c62386e2cc5a7d510c7ac14b40f8cd6dae6cbbd"
+                "reference": "e781460d47be8c8b19c502c7332a25b2f2616319"
             },
             "require": {
                 "illuminate/support": "^13.0",
-                "php": "^8.3"
+                "php": "^8.4"
             },
             "type": "library",
             "extra": {
@@ -8569,7 +8569,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.3"
+        "php": "^8.4"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
