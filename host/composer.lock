@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eed6869f3c7377b6fb819e0a25d55830",
+    "content-hash": "aaf6b1b916a8f634e416b8719ef8d029",
     "packages": [
         {
             "name": "brick/math",
@@ -5910,7 +5910,7 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/drop-share",
-                "reference": "7e6777d74aff09ee87af2d2ad47e1b2e999803b2"
+                "reference": "c2394d88462a7e3762239229ebb470f2d52ff51f"
             },
             "require": {
                 "drenso/genphrase": "^2.2",
@@ -5975,6 +5975,39 @@
                 }
             },
             "description": "Demo tool plugin — reference implementation for the plugin folder shape.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "techysavvy/photo-tweaker",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "../plugins/photo-tweaker",
+                "reference": "eb17decb2d543bda138e87aa87c7ae0d6588a495"
+            },
+            "require": {
+                "illuminate/support": "^13.0",
+                "php": "^8.3",
+                "techysavvy/core": "*",
+                "techysavvy/ui": "*"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Techysavvy\\PhotoTweaker\\PhotoTweakerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Techysavvy\\PhotoTweaker\\": "src/"
+                }
+            },
+            "description": "Crop, rotate, resize, and flip an uploaded image, then export it in a different format.",
             "transport-options": {
                 "symlink": true,
                 "relative": true

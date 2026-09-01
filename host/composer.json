@@ -21,7 +21,8 @@
         "techysavvy/ui": "*",
         "techysavvy/core": "*",
         "techysavvy/hello-tool": "*",
-        "techysavvy/drop-share": "*"
+        "techysavvy/drop-share": "*",
+        "techysavvy/photo-tweaker": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

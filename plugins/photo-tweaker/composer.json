@@ -1,0 +1,19 @@
+{
+    "name": "techysavvy/photo-tweaker",
+    "description": "Crop, rotate, resize, and flip an uploaded image, then export it in a different format.",
+    "type": "library",
+    "version": "1.0.0",
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0",
+        "techysavvy/core": "*",
+        "techysavvy/ui": "*"
+    },
+    "autoload": {
+        "psr-4": { "Techysavvy\\PhotoTweaker\\": "src/" }
+    },
+    "extra": {
+        "laravel": { "providers": ["Techysavvy\\PhotoTweaker\\PhotoTweakerServiceProvider"] }
+    },
+    "minimum-stability": "stable"
+}
