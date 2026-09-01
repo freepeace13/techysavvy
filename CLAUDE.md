@@ -1,6 +1,6 @@
 # techysavvy
 
-Laravel monorepo. `host/` is the only runnable app; `plugins/*` are standalone Composer packages wired in via path repositories. Full spec: `issues/prd.md`.
+Laravel monorepo. `host/` is the only runnable app; `plugins/*` are standalone Composer packages wired in via path repositories. Full spec: `ARCHITECTURE.md`.
 
 ## Rules when working in this repo
 

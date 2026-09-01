@@ -3,6 +3,9 @@
 .idea
 .vscode
 
+docs/
+issues/
+
 host/.env
 host/.env.backup
 host/.env.production

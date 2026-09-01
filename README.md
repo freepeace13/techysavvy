@@ -2,19 +2,20 @@
 
 A Laravel monorepo: a thin bootstrapper app (`host/`) that discovers and hosts small, independent tools (`plugins/*`).
 
+This is an open-source project and open to contributions — new tools, fixes, and enhancements are all welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to propose a tool and submit a PR, and [`CLAUDE.md`](CLAUDE.md) for the architectural rules PRs are reviewed against.
+
 ## Layout
 
 ```
 techysavvy/
 ├── host/                     # the only runnable Laravel application
-├── plugins/
-│   ├── ui/                   # branding + generic Blade UI components
-│   ├── core/                 # ToolContract interface + ToolRegistry
-│   └── <tool-name>/          # one folder per tool
-└── issues/prd.md             # spec for this bootstrap
+└── plugins/
+    ├── ui/                   # branding + generic Blade UI components
+    ├── core/                 # ToolContract interface + ToolRegistry
+    └── <tool-name>/          # one folder per tool
 ```
 
-Full rationale and decisions: [`issues/prd.md`](issues/prd.md).
+Full rationale and decisions: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## How it works
 
@@ -40,3 +41,11 @@ make test      # php artisan test
 1. Create `plugins/<name>/` with a `composer.json` (see `plugins/hello-tool/composer.json`), a `src/<Name>ServiceProvider.php`, and a class implementing `ToolContract`.
 2. Add `"techysavvy/<name>": "*"` to `host/composer.json`'s `require`.
 3. Run `make install` (or `composer update techysavvy/<name>` inside `host/`).
+
+## Contributing
+
+PRs are welcome — new tools, bug fixes, and enhancements to existing plugins. Start with [`CONTRIBUTING.md`](CONTRIBUTING.md) for the workflow (fork, branch, PR) and [`CLAUDE.md`](CLAUDE.md) for the rules PRs are reviewed against. Have an idea for a new tool? Open an issue with the "New tool proposal" template before you start building, so the scope can be discussed first.
+
+## License
+
+[MIT](LICENSE)
