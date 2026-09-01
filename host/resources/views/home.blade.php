@@ -1,5 +1,5 @@
 <x-brand::layout title="Tools">
-    <h1 class="mb-6 text-2xl font-bold text-ink">Tools</h1>
+    <h1 class="mb-6 font-display text-2xl font-bold text-ink">Tools</h1>
 
     <x-brand::tool-grid>
         @forelse ($tools as $tool)

@@ -1,5 +1,5 @@
 /*
- * Techysavvy shared branding preset.
+ * Techysavvy shared branding preset — "toolshop" system.
  *
  * Imported by host/resources/css/app.css so the host app and every tool
  * plugin (via <x-brand::...> components and Tailwind utility classes)
@@ -7,24 +7,59 @@
  * individual plugins.
  */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-    --color-brand-50: oklch(0.98 0.01 260);
-    --color-brand-100: oklch(0.95 0.03 260);
-    --color-brand-200: oklch(0.89 0.06 260);
-    --color-brand-300: oklch(0.80 0.10 260);
-    --color-brand-400: oklch(0.70 0.14 260);
-    --color-brand-500: oklch(0.58 0.18 260);
-    --color-brand-600: oklch(0.50 0.18 260);
-    --color-brand-700: oklch(0.42 0.16 260);
-    --color-brand-800: oklch(0.34 0.13 260);
-    --color-brand-900: oklch(0.27 0.10 260);
+    /* Ink — graphite, not pure black; keeps the industrial paper feel warm. */
+    --color-ink: #1C2321;
+    --color-ink-muted: #5B6664;
 
-    --color-surface: oklch(0.99 0.002 260);
-    --color-surface-muted: oklch(0.96 0.004 260);
-    --color-ink: oklch(0.22 0.01 260);
-    --color-ink-muted: oklch(0.45 0.01 260);
+    /* Surface — kraft-paper neutral, cooler than a cream/serif default. */
+    --color-surface: #FBFAF6;
+    --color-surface-muted: #F1EEE5;
+    --color-surface-sunken: #E9E5D9;
 
-    --radius-brand: 0.75rem;
+    /* Steel — hairlines, dividers, the pegboard grid. */
+    --color-steel-100: #EAEDEA;
+    --color-steel-200: #DEE3E1;
+    --color-steel-300: #C3CAC7;
+
+    /* Signal — the safety-orange grab handle. Primary actions, links, focus. */
+    --color-signal-50: #FDF0E9;
+    --color-signal-100: #FADCC9;
+    --color-signal-300: #EB9760;
+    --color-signal-500: #D9480F;
+    --color-signal-600: #B93D0C;
+    --color-signal-700: #92300A;
+
+    /* Brass — the kraft-tag secondary. Used sparingly: punch rings, hover accents. */
+    --color-brass-100: #F1E4C9;
+    --color-brass-300: #D9BC85;
+    --color-brass-500: #B98F4A;
+    --color-brass-700: #8C6A34;
+
+    /* Legacy brand-* aliases kept during the palette migration so any
+       not-yet-updated view keeps rendering instead of losing its tokens. */
+    --color-brand-50: var(--color-signal-50);
+    --color-brand-100: var(--color-signal-100);
+    --color-brand-200: var(--color-signal-100);
+    --color-brand-300: var(--color-signal-300);
+    --color-brand-400: var(--color-signal-300);
+    --color-brand-500: var(--color-signal-500);
+    --color-brand-600: var(--color-signal-600);
+    --color-brand-700: var(--color-signal-700);
+    --color-brand-800: var(--color-signal-700);
+    --color-brand-900: var(--color-signal-700);
+
+    --radius-brand: 0.375rem;
+    --radius-tag: 0.5rem;
+}
+
+/* Pegboard texture — a restrained dot grid, used only on the header band. */
+.bg-pegboard {
+    background-image: radial-gradient(var(--color-steel-300) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: -4px -4px;
 }
