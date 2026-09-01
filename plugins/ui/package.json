@@ -1,0 +1,9 @@
+{
+    "name": "techysavvy-ui",
+    "private": true,
+    "type": "module",
+    "main": "resources/js/index.js",
+    "dependencies": {
+        "alpinejs": "^3.17.1"
+    }
+}

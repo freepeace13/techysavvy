@@ -2,6 +2,7 @@
 
 install:
 	composer install --working-dir=host
+	npm install --prefix plugins/ui
 	npm install --prefix host
 
 serve:

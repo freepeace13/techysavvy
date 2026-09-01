@@ -17,6 +17,6 @@
         "@laravel/multiplex": "^0.4.1"
     },
     "dependencies": {
-        "alpinejs": "^3.17.1"
+        "techysavvy-ui": "file:../plugins/ui"
     }
 }
