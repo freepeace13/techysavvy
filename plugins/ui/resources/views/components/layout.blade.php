@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name') }}</title>
-    @vite('resources/css/app.css')
+    @vite(config('ui.vite_entries'))
     @stack('styles')
 </head>
 <body class="min-h-screen bg-surface font-sans text-ink antialiased">
@@ -20,5 +21,7 @@
     <main class="mx-auto max-w-5xl px-6 py-10">
         {{ $slot }}
     </main>
+
+    @stack('scripts')
 </body>
 </html>
