@@ -8,4 +8,7 @@ use Illuminate\Support\Facades\Route;
 // plugin's form needs CSRF protection, so it opts in explicitly here.
 Route::middleware('web')->group(function () {
     Route::get('/doc-to-markdown', fn () => view('doc-to-markdown::home'))->name('doc-to-markdown.home');
+
+    Route::post('/doc-to-markdown/convert', [\Techysavvy\DocToMarkdown\Http\Controllers\ConvertController::class, 'store'])
+        ->name('doc-to-markdown.convert');
 });
