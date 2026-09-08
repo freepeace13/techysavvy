@@ -2,6 +2,8 @@
 
 namespace Techysavvy\DocToMarkdown\Converters;
 
+use PhpOffice\PhpWord\IOFactory;
+
 class DocxConverter implements DocumentConverter
 {
     public function __construct(private readonly DocxMarkdownWriter $writer)
@@ -10,6 +12,6 @@ class DocxConverter implements DocumentConverter
 
     public function convert(string $filePath): string
     {
-        throw new \RuntimeException('Not yet implemented.');
+        return $this->writer->write(IOFactory::load($filePath));
     }
 }
