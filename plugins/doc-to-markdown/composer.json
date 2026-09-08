@@ -1,0 +1,45 @@
+{
+    "name": "techysavvy/doc-to-markdown",
+    "description": "Convert a Word document or PDF into Markdown, right in the browser.",
+    "type": "library",
+    "version": "1.0.0",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^13.0",
+        "techysavvy/core": "*",
+        "techysavvy/ui": "*",
+        "phpoffice/phpword": "^1.4",
+        "smalot/pdfparser": "^2.12"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.2",
+        "phpunit/phpunit": "^12.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Techysavvy\\DocToMarkdown\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Techysavvy\\DocToMarkdown\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techysavvy\\DocToMarkdown\\DocToMarkdownServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}
