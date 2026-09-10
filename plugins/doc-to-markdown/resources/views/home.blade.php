@@ -16,14 +16,14 @@
     }
 @endphp
 
-<x-brand::layout title="Doc to Markdown">
-    <x-brand::page-header eyebrow="Convert &middot; docx &amp; pdf" title="Doc to Markdown">
+<x-ui::layout title="Doc to Markdown">
+    <x-ui::page-header eyebrow="Convert &middot; docx &amp; pdf" title="Doc to Markdown">
         Drop a Word document or PDF, get clean Markdown back &mdash; nothing is stored, up to {{ $maxLabel }}.
         PDF conversion preserves text, not formatting.
-    </x-brand::page-header>
+    </x-ui::page-header>
 
     <div x-data="docToMarkdown({ action: '{{ route('doc-to-markdown.convert') }}' })" class="grid grid-cols-1 gap-6">
-        <x-brand::panel
+        <x-ui::panel
             eyebrow="Upload"
             title="Convert a file"
             :meta="$maxLabel . ' max'"
@@ -36,7 +36,7 @@
             x-transition:leave-end="opacity-0 -translate-x-4"
         >
             <div>
-                <x-brand::dropzone
+                <x-ui::dropzone
                     name="file"
                     accept=".docx,.pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf"
                     idle-expr="state === 'idle' || state === 'error'"
@@ -58,7 +58,7 @@
                             aria-label="Remove file"
                         >&times;</button>
                     </x-slot:selected>
-                </x-brand::dropzone>
+                </x-ui::dropzone>
 
                 <div x-show="state === 'uploading'" x-cloak class="rounded-brand border-2 border-dashed border-steel-300 px-4 py-8">
                     <div class="flex items-center justify-between font-mono text-xs text-ink">
@@ -75,11 +75,11 @@
             </div>
 
             <div x-show="state === 'error'" x-cloak class="mt-4">
-                <x-brand::alert variant="error" x-text="errorMessage"></x-brand::alert>
+                <x-ui::alert variant="error" x-text="errorMessage"></x-ui::alert>
             </div>
-        </x-brand::panel>
+        </x-ui::panel>
 
-        <x-brand::panel
+        <x-ui::panel
             eyebrow="Result"
             title="Markdown"
             x-show="state === 'success'"
@@ -92,7 +92,7 @@
             x-transition:leave-end="opacity-0 translate-x-4"
         >
             <div class="flex items-center justify-between gap-3">
-                <x-brand::tabs
+                <x-ui::tabs
                     model="view"
                     :options="[
                         ['value' => 'markdown', 'label' => 'Markdown'],
@@ -100,9 +100,9 @@
                     ]"
                 />
 
-                <x-brand::button type="button" variant="secondary" @click="copy()">
+                <x-ui::button type="button" variant="secondary" @click="copy()">
                     <span x-text="copied ? 'Copied' : 'Copy'"></span>
-                </x-brand::button>
+                </x-ui::button>
             </div>
 
             <div class="mt-3">
@@ -111,14 +111,14 @@
             </div>
 
             <div class="mt-4 flex items-center gap-3">
-                <x-brand::button type="button" @click="download()">Download .md</x-brand::button>
+                <x-ui::button type="button" @click="download()">Download .md</x-ui::button>
                 <button
                     type="button"
                     @click="reset()"
                     class="text-sm text-ink-muted underline decoration-steel-300 underline-offset-4 transition hover:text-signal-600"
                 >Convert another</button>
             </div>
-        </x-brand::panel>
+        </x-ui::panel>
     </div>
 
     @push('styles')
@@ -332,4 +332,4 @@
             }
         </script>
     @endpush
-</x-brand::layout>
+</x-ui::layout>

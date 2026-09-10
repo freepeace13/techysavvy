@@ -10,7 +10,7 @@ class UiServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/ui.php', 'ui');
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'brand');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'ui');
 
         $this->publishes([
             __DIR__.'/../config/ui.php' => config_path('ui.php'),

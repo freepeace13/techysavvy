@@ -1,12 +1,12 @@
-<x-brand::layout title="Photo Tweaker">
-    <x-brand::page-header eyebrow="Image workshop" title="Photo Tweaker">
+<x-ui::layout title="Photo Tweaker">
+    <x-ui::page-header eyebrow="Image workshop" title="Photo Tweaker">
         Upload an image, crop it, rotate or flip it, resize it, then export the result
         as PNG, JPEG, or WebP. Everything happens in your browser &mdash; nothing is uploaded anywhere.
-    </x-brand::page-header>
+    </x-ui::page-header>
 
     <div x-data="photoTweaker()" x-init="init()">
-        <x-brand::panel eyebrow="Step 1" title="Upload an image" x-show="!image" x-cloak>
-            <x-brand::dropzone name="file" :required="false">
+        <x-ui::panel eyebrow="Step 1" title="Upload an image" x-show="!image" x-cloak>
+            <x-ui::dropzone name="file" :required="false">
                 <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 text-steel-300" aria-hidden="true">
                     <path d="M6 16 24 7l18 9-18 9-18-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                     <path d="M6 16v16l18 9 18-9V16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -18,16 +18,16 @@
                 <x-slot:selected>
                     <span class="truncate" x-text="file?.name"></span>
                 </x-slot:selected>
-            </x-brand::dropzone>
+            </x-ui::dropzone>
 
             <div x-show="errorMessage" x-cloak class="mt-4">
-                <x-brand::alert variant="error" x-text="errorMessage"></x-brand::alert>
+                <x-ui::alert variant="error" x-text="errorMessage"></x-ui::alert>
             </div>
-        </x-brand::panel>
+        </x-ui::panel>
 
         <div x-show="image" x-cloak class="grid grid-cols-1 gap-6 md:grid-cols-3 md:items-start">
             {{-- Canvas + crop overlay -------------------------------------- --}}
-            <x-brand::panel eyebrow="Preview" class="md:col-span-2">
+            <x-ui::panel eyebrow="Preview" class="md:col-span-2">
                 <p class="mb-3 font-mono text-xs text-ink-muted" x-text="dimensionsLabel"></p>
 
                 <div
@@ -55,27 +55,27 @@
 
                 <div class="mt-4 flex flex-wrap items-center gap-2">
                     <template x-if="!cropping">
-                        <x-brand::button type="button" variant="secondary" @click="cropping = true; cropBox = null">
+                        <x-ui::button type="button" variant="secondary" @click="cropping = true; cropBox = null">
                             Crop
-                        </x-brand::button>
+                        </x-ui::button>
                     </template>
                     <template x-if="cropping">
-                        <x-brand::button type="button" @click="applyCrop()" ::disabled="!cropBox">
+                        <x-ui::button type="button" @click="applyCrop()" ::disabled="!cropBox">
                             Apply crop
-                        </x-brand::button>
+                        </x-ui::button>
                     </template>
                     <template x-if="cropping">
-                        <x-brand::button type="button" variant="secondary" @click="cropping = false; cropBox = null">
+                        <x-ui::button type="button" variant="secondary" @click="cropping = false; cropBox = null">
                             Cancel crop
-                        </x-brand::button>
+                        </x-ui::button>
                     </template>
 
                     <span class="mx-1 h-6 w-px bg-steel-200"></span>
 
-                    <x-brand::button type="button" variant="secondary" @click="rotate(-90)" title="Rotate left">&#8634; Rotate</x-brand::button>
-                    <x-brand::button type="button" variant="secondary" @click="rotate(90)" title="Rotate right">&#8635; Rotate</x-brand::button>
-                    <x-brand::button type="button" variant="secondary" @click="flip('horizontal')">&#8596; Flip</x-brand::button>
-                    <x-brand::button type="button" variant="secondary" @click="flip('vertical')">&#8597; Flip</x-brand::button>
+                    <x-ui::button type="button" variant="secondary" @click="rotate(-90)" title="Rotate left">&#8634; Rotate</x-ui::button>
+                    <x-ui::button type="button" variant="secondary" @click="rotate(90)" title="Rotate right">&#8635; Rotate</x-ui::button>
+                    <x-ui::button type="button" variant="secondary" @click="flip('horizontal')">&#8596; Flip</x-ui::button>
+                    <x-ui::button type="button" variant="secondary" @click="flip('vertical')">&#8597; Flip</x-ui::button>
 
                     <span class="mx-1 h-6 w-px bg-steel-200"></span>
 
@@ -83,11 +83,11 @@
                         Start over
                     </button>
                 </div>
-            </x-brand::panel>
+            </x-ui::panel>
 
             {{-- Resize + export ------------------------------------------- --}}
             <div class="flex flex-col gap-6">
-                <x-brand::panel eyebrow="Step 2" title="Resize">
+                <x-ui::panel eyebrow="Step 2" title="Resize">
                     <div class="flex items-end gap-3">
                         <label class="flex flex-1 flex-col gap-1.5">
                             <span class="text-sm font-medium text-ink">Width</span>
@@ -104,12 +104,12 @@
                         Lock aspect ratio
                     </label>
 
-                    <x-brand::button type="button" variant="secondary" class="mt-4 w-full" @click="applyResize()">
+                    <x-ui::button type="button" variant="secondary" class="mt-4 w-full" @click="applyResize()">
                         Apply resize
-                    </x-brand::button>
-                </x-brand::panel>
+                    </x-ui::button>
+                </x-ui::panel>
 
-                <x-brand::panel eyebrow="Step 3" title="Export">
+                <x-ui::panel eyebrow="Step 3" title="Export">
                     <label class="flex flex-col gap-1.5">
                         <span class="text-sm font-medium text-ink">Format</span>
                         <select x-model="exportFormat" class="rounded-brand border border-steel-300 bg-surface px-3 py-2 text-ink focus:border-signal-500 focus:outline-none focus:ring-2 focus:ring-signal-100">
@@ -126,10 +126,10 @@
                         <input type="range" min="0.1" max="1" step="0.05" x-model.number="exportQuality" class="accent-signal-500">
                     </label>
 
-                    <x-brand::button type="button" class="mt-4 w-full" @click="download()">
+                    <x-ui::button type="button" class="mt-4 w-full" @click="download()">
                         Download
-                    </x-brand::button>
-                </x-brand::panel>
+                    </x-ui::button>
+                </x-ui::panel>
             </div>
         </div>
     </div>
@@ -383,4 +383,4 @@
             }
         </script>
     @endpush
-</x-brand::layout>
+</x-ui::layout>

@@ -9,11 +9,11 @@
         : \Illuminate\Support\Str::plural('hour', $lifespanHours, true);
 @endphp
 
-<x-brand::layout title="Drop Share">
-    <x-brand::page-header eyebrow="Package drop &middot; send &amp; receive" title="Drop Share">
+<x-ui::layout title="Drop Share">
+    <x-ui::page-header eyebrow="Package drop &middot; send &amp; receive" title="Drop Share">
         Send a file, get a claim phrase. Trade the phrase back in and it's yours &mdash;
         up to {{ $maxLabel }}, held for {{ $lifespanLabel }} before it's swept off the dock.
-    </x-brand::page-header>
+    </x-ui::page-header>
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-start">
         {{-- DOCK A · SEND ------------------------------------------------ --}}
@@ -23,7 +23,7 @@
                 maxLabel: '{{ $maxLabel }}',
             })"
         >
-            <x-brand::panel eyebrow="Dock A" title="Send a file" :meta="$maxLabel . ' max'">
+            <x-ui::panel eyebrow="Dock A" title="Send a file" :meta="$maxLabel . ' max'">
                 <form
                     method="POST"
                     action="{{ route('drop-share.upload') }}"
@@ -32,7 +32,7 @@
                 >
                     @csrf
 
-                    <x-brand::dropzone name="file" x-show="state !== 'success'">
+                    <x-ui::dropzone name="file" x-show="state !== 'success'">
                         <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 text-steel-300" aria-hidden="true">
                             <path d="M6 16 24 7l18 9-18 9-18-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                             <path d="M6 16v16l18 9 18-9V16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -54,7 +54,7 @@
                                 >&times;</button>
                             </div>
                         </x-slot:selected>
-                    </x-brand::dropzone>
+                    </x-ui::dropzone>
 
                     {{-- progress gauge --}}
                     <div x-show="state === 'uploading'" x-cloak class="mt-4">
@@ -70,7 +70,7 @@
                         </div>
                     </div>
 
-                    <x-brand::button
+                    <x-ui::button
                         x-show="state !== 'success'"
                         type="submit"
                         class="mt-5 w-full"
@@ -78,7 +78,7 @@
                     >
                         <span x-show="state !== 'uploading'">Send it</span>
                         <span x-show="state === 'uploading'">Sending&hellip;</span>
-                    </x-brand::button>
+                    </x-ui::button>
                 </form>
 
                 {{-- claim ticket --}}
@@ -95,9 +95,9 @@
                     <p class="mt-2 text-xs text-ink-muted">Held for {{ $lifespanLabel }}. Whoever has the phrase can claim it.</p>
 
                     <div class="mt-4 flex items-center gap-3">
-                        <x-brand::button type="button" variant="secondary" @click="copyPhrase()">
+                        <x-ui::button type="button" variant="secondary" @click="copyPhrase()">
                             <span x-text="copied ? 'Copied' : 'Copy phrase'"></span>
-                        </x-brand::button>
+                        </x-ui::button>
                         <button
                             type="button"
                             @click="reset()"
@@ -113,19 +113,19 @@
                     x-transition:enter="animate-shake"
                     class="mt-4"
                 >
-                    <x-brand::alert variant="error">
+                    <x-ui::alert variant="error">
                         <span class="font-mono text-[11px] uppercase tracking-[0.2em]">Rejected</span>
                         <p class="mt-1" x-text="errorMessage"></p>
-                    </x-brand::alert>
+                    </x-ui::alert>
                 </div>
-            </x-brand::panel>
+            </x-ui::panel>
         </div>
 
         {{-- DOCK B · RECEIVE ---------------------------------------------- --}}
-        <x-brand::panel eyebrow="Dock B" title="Receive a file">
+        <x-ui::panel eyebrow="Dock B" title="Receive a file">
             @if (session('drop_share_error'))
                 <div class="mb-4 animate-shake">
-                    <x-brand::alert variant="error">{{ session('drop_share_error') }}</x-brand::alert>
+                    <x-ui::alert variant="error">{{ session('drop_share_error') }}</x-ui::alert>
                 </div>
             @endif
 
@@ -151,12 +151,12 @@
                     <p class="font-mono text-xs text-signal-600">{{ $message }}</p>
                 @enderror
 
-                <x-brand::button type="submit" variant="secondary" class="w-full" ::disabled="submitting">
+                <x-ui::button type="submit" variant="secondary" class="w-full" ::disabled="submitting">
                     <span x-show="!submitting">Receive it</span>
                     <span x-show="submitting">Fetching&hellip;</span>
-                </x-brand::button>
+                </x-ui::button>
             </form>
-        </x-brand::panel>
+        </x-ui::panel>
     </div>
 
     @push('styles')
@@ -329,4 +329,4 @@
             }
         </script>
     @endpush
-</x-brand::layout>
+</x-ui::layout>

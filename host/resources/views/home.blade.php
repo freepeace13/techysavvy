@@ -1,9 +1,9 @@
-<x-brand::layout title="Tools">
+<x-ui::layout title="Tools">
     <h1 class="mb-6 font-display text-2xl font-bold text-ink">Tools</h1>
 
-    <x-brand::tool-grid>
+    <x-ui::tool-grid>
         @forelse ($tools as $tool)
-            <x-brand::tool-card
+            <x-ui::tool-card
                 :icon="$tool->icon()"
                 :name="$tool->name()"
                 :description="$tool->description()"
@@ -12,5 +12,5 @@
         @empty
             <p>No tools installed yet.</p>
         @endforelse
-    </x-brand::tool-grid>
-</x-brand::layout>
+    </x-ui::tool-grid>
+</x-ui::layout>

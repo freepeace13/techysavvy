@@ -14,7 +14,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        // The <x-brand::layout> component's @vite directive has no build
+        // The <x-ui::layout> component's @vite directive has no build
         // manifest inside Testbench's throwaway skeleton app; every Feature
         // test in this plugin renders that layout, so disable Vite globally.
         $this->withoutVite();

@@ -2,7 +2,7 @@
  * Techysavvy shared branding preset — "toolshop" system.
  *
  * Imported by host/resources/css/app.css so the host app and every tool
- * plugin (via <x-brand::...> components and Tailwind utility classes)
+ * plugin (via <x-ui::...> components and Tailwind utility classes)
  * render from one visual source of truth. Change tokens here, not in
  * individual plugins.
  */

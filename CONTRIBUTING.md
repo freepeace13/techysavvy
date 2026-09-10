@@ -28,7 +28,7 @@ contributors alike, and reviewers will ask for changes that violate them.
   `Techysavvy\Core\ToolContract` and call `ToolRegistry::register()` from
   your plugin's own `ServiceProvider::boot()` — never add a tool to a list
   inside `host/`.
-- **Use `plugins/ui`'s Blade components** (`<x-brand::...>`) for
+- **Use `plugins/ui`'s Blade components** (`<x-ui::...>`) for
   branding/UI instead of duplicating markup or styles.
 - **Tests live with what they test.** A plugin's own behavior is tested in
   `plugins/<name>/tests`; host-level seam tests (e.g. "the home page

@@ -116,7 +116,7 @@ is bootable on its own.
   specific plugin's classes — only the `ToolContract` type.
 - **View/asset namespacing** — each plugin registers its Blade views under
   its own namespace (e.g. `<plugin>::`); `ui`'s components are registered
-  under one stable namespace (`brand::`) so both host and plugin views
+  under one stable namespace (`ui::`) so both host and plugin views
   reference them identically.
 
 ## Testing philosophy
