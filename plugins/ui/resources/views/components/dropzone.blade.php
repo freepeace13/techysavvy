@@ -1,6 +1,7 @@
 @props([
     'name',
     'required' => true,
+    'accept' => null,
     'draggingExpr' => 'dragging',
     'fileExpr' => 'file',
     'idleExpr' => "state === 'idle'",
@@ -29,6 +30,7 @@
         type="file"
         name="{{ $name }}"
         @if ($required) required @endif
+        @if ($accept) accept="{{ $accept }}" @endif
         class="sr-only"
         @change="handleSelect($event)"
     >
