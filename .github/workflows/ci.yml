@@ -32,16 +32,29 @@ jobs:
       - name: Install JS dependencies
         run: |
           npm install --prefix plugins/ui
+          npm install --prefix plugins/doc-to-markdown
           npm install --prefix host
 
       - name: Build frontend assets
         run: npm run build --prefix host
+
+      # Tool plugins that own their JS build their own bundle. Without this,
+      # the page renders a <script> tag pointing at an asset that was never
+      # built or published, and CI stays green while the tool is broken.
+      - name: Build plugin assets
+        run: npm run build --prefix plugins/doc-to-markdown
+
+      - name: Test plugin assets
+        run: npm test --prefix plugins/doc-to-markdown
 
       - name: Copy environment file
         run: cp host/.env.example host/.env
 
       - name: Generate application key
         run: cd host && php artisan key:generate
+
+      - name: Publish plugin assets
+        run: cd host && php artisan vendor:publish --tag=doc-to-markdown-assets --force
 
       - name: Run tests
         run: cd host && php artisan test
