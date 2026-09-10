@@ -45,6 +45,11 @@ Things worth knowing:
   in `host/public/vendor/` and the page looking unchanged.
 - **`--force` is not optional.** `vendor:publish` skips files that already
   exist, so without it a rebuilt bundle never overwrites the published one.
+- **The `<script>` URL is fingerprinted** with a short hash of the published
+  file's contents (`?id=…`). The published path itself is stable and
+  unhashed, unlike `host/`'s Vite output, so without this a browser would
+  keep serving the previous bundle from cache after a rebuild. The hash
+  changes only when the bundle's bytes change.
 - The bundle is served as a static file from the host's public directory —
   it does not go through a PHP route.
 - `host/`'s own Vite build knows nothing about this plugin, and must not:

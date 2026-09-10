@@ -2,6 +2,18 @@
     $maxKb = (int) config('doc-to-markdown.max_upload_kb');
     $maxMb = $maxKb >= 1024 ? rtrim(rtrim(number_format($maxKb / 1024, 1), '0'), '.') : null;
     $maxLabel = $maxMb ? "{$maxMb} MB" : "{$maxKb} KB";
+
+    // The published bundle lives at a stable, unhashed URL (unlike host/'s
+    // Vite output, which is content-hashed), so a rebuild would otherwise
+    // keep being served from browser cache. Fingerprint it by contents:
+    // the URL changes only when the bundle actually changes.
+    $bundle = 'vendor/doc-to-markdown/doc-to-markdown.js';
+    $bundlePath = public_path($bundle);
+    $bundleUrl = asset($bundle);
+
+    if (is_file($bundlePath)) {
+        $bundleUrl .= '?id='.substr(hash_file('xxh128', $bundlePath), 0, 12);
+    }
 @endphp
 
 <x-brand::layout title="Doc to Markdown">
@@ -117,7 +129,7 @@
     @endpush
 
     @push('scripts')
-        <script src="{{ asset('vendor/doc-to-markdown/doc-to-markdown.js') }}"></script>
+        <script src="{{ $bundleUrl }}"></script>
 
         <script>
             function docToMarkdown({ action }) {
