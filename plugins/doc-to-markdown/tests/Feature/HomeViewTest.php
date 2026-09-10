@@ -48,6 +48,29 @@ class HomeViewTest extends TestCase
         $response->assertSee('vendor/doc-to-markdown/doc-to-markdown.js');
     }
 
+    public function test_the_markdown_preview_grows_with_its_content_instead_of_scrolling(): void
+    {
+        $html = $this->get(route('doc-to-markdown.home'))->assertOk()->getContent();
+
+        preg_match('~<div class="([^"]*markdown-render[^"]*)"~', $html, $matches);
+
+        $this->assertNotEmpty($matches, 'Expected the markdown preview container.');
+        $this->assertStringNotContainsString('h-64', $matches[1], 'The preview must not be pinned to a fixed height.');
+        $this->assertStringNotContainsString('overflow-y-auto', $matches[1], 'The preview must not scroll internally.');
+    }
+
+    public function test_the_preview_styles_restore_what_tailwinds_preflight_resets(): void
+    {
+        // Preflight sets headings to font-size:inherit and links to
+        // color:inherit. Without explicit rules every heading renders at body
+        // size and every link renders as plain text.
+        $html = $this->get(route('doc-to-markdown.home'))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('~\.markdown-render h1\s*\{[^}]*font-size~', $html);
+        $this->assertMatchesRegularExpression('~\.markdown-render h2\s*\{[^}]*font-size~', $html);
+        $this->assertMatchesRegularExpression('~\.markdown-render a\s*\{[^}]*color~', $html);
+    }
+
     private function makePublicPath(): string
     {
         $path = sys_get_temp_dir().'/d2m-public-'.bin2hex(random_bytes(6));
