@@ -71,6 +71,19 @@ class HomeViewTest extends TestCase
         $this->assertMatchesRegularExpression('~\.markdown-render a\s*\{[^}]*color~', $html);
     }
 
+    public function test_the_copy_button_writes_both_html_and_plain_text_to_the_clipboard(): void
+    {
+        // Copying only the raw markdown source means pasting into a rich-text
+        // target (email, docs, chat) shows literal "#"/"*" syntax instead of
+        // rendered headings/bullets. The clipboard write must include the
+        // rendered HTML alongside the plain-text markdown.
+        $html = $this->get(route('doc-to-markdown.home'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('new ClipboardItem(', $html);
+        $this->assertStringContainsString("'text/html': new Blob([this.markdownHtml]", $html);
+        $this->assertStringContainsString("'text/plain': new Blob([this.markdown]", $html);
+    }
+
     private function makePublicPath(): string
     {
         $path = sys_get_temp_dir().'/d2m-public-'.bin2hex(random_bytes(6));
