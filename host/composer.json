@@ -18,11 +18,12 @@
         "php": "^8.4",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
-        "techysavvy/ui": "*",
         "techysavvy/core": "*",
-        "techysavvy/hello-tool": "*",
+        "techysavvy/doc-to-markdown": "*",
         "techysavvy/drop-share": "*",
-        "techysavvy/photo-tweaker": "*"
+        "techysavvy/hello-tool": "*",
+        "techysavvy/photo-tweaker": "*",
+        "techysavvy/ui": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
