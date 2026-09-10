@@ -13,6 +13,7 @@ host/.phpunit.cache
 host/.phpunit.result.cache
 host/node_modules
 host/public/build
+host/public/vendor
 host/public/hot
 host/public/storage
 host/storage/*.key

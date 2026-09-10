@@ -14,4 +14,12 @@ class HomeViewTest extends TestCase
         $response->assertSee('Drop a .docx or .pdf here');
         $response->assertSee('PDF conversion preserves text, not formatting');
     }
+
+    public function test_the_home_page_loads_the_published_markdown_bundle(): void
+    {
+        $response = $this->get(route('doc-to-markdown.home'));
+
+        $response->assertOk();
+        $response->assertSee('vendor/doc-to-markdown/doc-to-markdown.js');
+    }
 }

@@ -117,8 +117,7 @@
     @endpush
 
     @push('scripts')
-        <script src="{{ route('doc-to-markdown.assets.markdown-it') }}"></script>
-        <script src="{{ route('doc-to-markdown.assets.script') }}"></script>
+        <script src="{{ asset('vendor/doc-to-markdown/doc-to-markdown.js') }}"></script>
 
         <script>
             function docToMarkdown({ action }) {

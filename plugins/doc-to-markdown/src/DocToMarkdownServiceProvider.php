@@ -15,5 +15,11 @@ class DocToMarkdownServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'doc-to-markdown');
 
         $this->app->make(ToolRegistry::class)->register(new DocToMarkdownTool());
+
+        // The plugin builds its own JS (see package.json / vite.config.js) and
+        // ships the bundle as a static file from the host's public directory.
+        $this->publishes([
+            __DIR__.'/../resources/dist' => public_path('vendor/doc-to-markdown'),
+        ], 'doc-to-markdown-assets');
     }
 }
