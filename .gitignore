@@ -13,6 +13,7 @@ host/.phpunit.cache
 host/.phpunit.result.cache
 host/node_modules
 host/public/build
+host/public/vendor
 host/public/hot
 host/public/storage
 host/storage/*.key
@@ -27,5 +28,6 @@ host/database/database.sqlite
 
 plugins/*/vendor
 plugins/*/node_modules
+plugins/*/resources/dist
 plugins/*/.phpunit.cache
 plugins/*/.phpunit.result.cache

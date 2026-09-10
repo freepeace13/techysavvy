@@ -12,16 +12,3 @@ Route::middleware('web')->group(function () {
     Route::post('/doc-to-markdown/convert', [\Techysavvy\DocToMarkdown\Http\Controllers\ConvertController::class, 'store'])
         ->name('doc-to-markdown.convert');
 });
-
-// Pre-built JS assets shipped with the plugin (see resources/dist/) are
-// served straight from disk instead of going through host/'s Vite build, so
-// the tool works right after `composer install` with no npm step in host/.
-Route::get('/doc-to-markdown/assets/markdown-it.min.js', fn () => response()->file(
-    __DIR__.'/../resources/dist/vendor/markdown-it.min.js',
-    ['Content-Type' => 'application/javascript']
-))->name('doc-to-markdown.assets.markdown-it');
-
-Route::get('/doc-to-markdown/assets/doc-to-markdown.js', fn () => response()->file(
-    __DIR__.'/../resources/dist/doc-to-markdown.js',
-    ['Content-Type' => 'application/javascript']
-))->name('doc-to-markdown.assets.script');

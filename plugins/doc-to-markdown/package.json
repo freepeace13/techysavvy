@@ -1,0 +1,16 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "name": "techysavvy-doc-to-markdown",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "test": "node --test tests/js/*.test.js"
+    },
+    "dependencies": {
+        "markdown-it": "^15.0.1"
+    },
+    "devDependencies": {
+        "vite": "^8.0.0"
+    }
+}
