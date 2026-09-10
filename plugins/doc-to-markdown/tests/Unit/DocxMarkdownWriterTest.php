@@ -30,7 +30,7 @@ class DocxMarkdownWriterTest extends TestCase
 
     public function test_it_converts_headings_paragraphs_runs_lists_and_a_table(): void
     {
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
         $phpWord->addTitleStyle(1, ['bold' => true, 'size' => 20]);
         $phpWord->addTitleStyle(2, ['bold' => true, 'size' => 16]);
 
@@ -73,7 +73,7 @@ class DocxMarkdownWriterTest extends TestCase
         $table->addCell(2000)->addText('Cell 1');
         $table->addCell(2000)->addText('Cell 2');
 
-        $markdown = (new DocxMarkdownWriter())->write($this->roundTrip($phpWord));
+        $markdown = (new DocxMarkdownWriter)->write($this->roundTrip($phpWord));
 
         $expected = <<<'MD'
         # Main Heading
@@ -100,7 +100,7 @@ class DocxMarkdownWriterTest extends TestCase
 
     public function test_it_converts_hyperlinks_standalone_and_inside_a_text_run(): void
     {
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
         $section = $phpWord->addSection();
         $section->addLink('https://example.com', 'Example Site');
 
@@ -109,7 +109,7 @@ class DocxMarkdownWriterTest extends TestCase
         $run->addLink('https://example.com/docs', 'the docs');
         $run->addText(' for more.');
 
-        $markdown = (new DocxMarkdownWriter())->write($this->roundTrip($phpWord));
+        $markdown = (new DocxMarkdownWriter)->write($this->roundTrip($phpWord));
 
         $expected = <<<'MD'
         [Example Site](https://example.com)
@@ -122,7 +122,7 @@ class DocxMarkdownWriterTest extends TestCase
 
     public function test_it_escapes_pipe_characters_in_table_cells(): void
     {
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
         $section = $phpWord->addSection();
 
         $table = $section->addTable();
@@ -130,7 +130,7 @@ class DocxMarkdownWriterTest extends TestCase
         $table->addCell(2000)->addText('A | B');
         $table->addCell(2000)->addText('Normal');
 
-        $markdown = (new DocxMarkdownWriter())->write($this->roundTrip($phpWord));
+        $markdown = (new DocxMarkdownWriter)->write($this->roundTrip($phpWord));
 
         $expected = <<<'MD'
         | A \| B | Normal |
@@ -142,7 +142,7 @@ class DocxMarkdownWriterTest extends TestCase
 
     public function test_it_placeholders_embedded_images(): void
     {
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
         $section = $phpWord->addSection();
         $section->addText('Before image.');
         // A 1x1 transparent PNG, inline base64 so the test needs no fixture file.
@@ -151,7 +151,7 @@ class DocxMarkdownWriterTest extends TestCase
         $section->addImage($pngPath);
         $section->addText('After image.');
 
-        $markdown = (new DocxMarkdownWriter())->write($this->roundTrip($phpWord));
+        $markdown = (new DocxMarkdownWriter)->write($this->roundTrip($phpWord));
 
         unlink($pngPath);
 

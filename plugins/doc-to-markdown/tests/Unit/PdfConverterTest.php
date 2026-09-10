@@ -19,7 +19,7 @@ class PdfConverterTest extends TestCase
         $path = tempnam(sys_get_temp_dir(), 'pdf-converter-test-').'.pdf';
         file_put_contents($path, $pdf);
 
-        $markdown = (new PdfConverter(new PdfMarkdownFormatter()))->convert($path);
+        $markdown = (new PdfConverter(new PdfMarkdownFormatter))->convert($path);
 
         unlink($path);
 
@@ -45,7 +45,7 @@ class PdfConverterTest extends TestCase
         $path = tempnam(sys_get_temp_dir(), 'pdf-converter-test-').'.pdf';
         file_put_contents($path, $pdf);
 
-        $markdown = (new PdfConverter(new PdfMarkdownFormatter()))->convert($path);
+        $markdown = (new PdfConverter(new PdfMarkdownFormatter))->convert($path);
 
         unlink($path);
 

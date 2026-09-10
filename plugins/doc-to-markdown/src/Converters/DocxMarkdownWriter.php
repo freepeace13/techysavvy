@@ -105,7 +105,7 @@ class DocxMarkdownWriter
     {
         $numStyleObj = Style::getStyle($item->getStyle()->getNumStyle());
 
-        if (!$numStyleObj instanceof Numbering) {
+        if (! $numStyleObj instanceof Numbering) {
             return false;
         }
 
@@ -115,8 +115,8 @@ class DocxMarkdownWriter
     }
 
     /**
-     * @param array<int, mixed> $elements
-     * @param string[] $rendered
+     * @param  array<int, mixed>  $elements
+     * @param  string[]  $rendered
      * @return string[]
      */
     private function mergeConsecutiveListItems(array $elements, array $rendered): array
@@ -125,7 +125,7 @@ class DocxMarkdownWriter
         $ordinal = [];
 
         foreach ($elements as $index => $element) {
-            if (!$element instanceof ListItemRun) {
+            if (! $element instanceof ListItemRun) {
                 $merged[] = $rendered[$index];
 
                 continue;

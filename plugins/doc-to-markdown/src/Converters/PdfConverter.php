@@ -6,13 +6,11 @@ use Smalot\PdfParser\Parser;
 
 class PdfConverter implements DocumentConverter
 {
-    public function __construct(private readonly PdfMarkdownFormatter $formatter)
-    {
-    }
+    public function __construct(private readonly PdfMarkdownFormatter $formatter) {}
 
     public function convert(string $filePath): string
     {
-        $pdf = (new Parser())->parseFile($filePath);
+        $pdf = (new Parser)->parseFile($filePath);
 
         $pages = [];
         foreach ($pdf->getPages() as $page) {
