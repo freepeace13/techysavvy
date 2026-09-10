@@ -4,6 +4,7 @@ namespace Techysavvy\DocToMarkdown\Converters;
 
 use PhpOffice\PhpWord\Element\AbstractContainer;
 use PhpOffice\PhpWord\Element\Image;
+use PhpOffice\PhpWord\Element\Link;
 use PhpOffice\PhpWord\Element\ListItemRun;
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\Element\Text;
@@ -43,6 +44,8 @@ class DocxMarkdownWriter
                 $rendered[] = $this->writeTable($element);
             } elseif ($element instanceof Image) {
                 $rendered[] = '*[image omitted]*';
+            } elseif ($element instanceof Link) {
+                $rendered[] = $this->writeLink($element);
             } else {
                 $rendered[] = '';
             }
@@ -69,10 +72,17 @@ class DocxMarkdownWriter
                 $parts[] = $this->formatRunText($element);
             } elseif ($element instanceof Image) {
                 $parts[] = '*[image omitted]*';
+            } elseif ($element instanceof Link) {
+                $parts[] = $this->writeLink($element);
             }
         }
 
         return implode('', $parts);
+    }
+
+    private function writeLink(Link $link): string
+    {
+        return '['.$link->getText().']('.$link->getSource().')';
     }
 
     private function formatRunText(Text $text): string
@@ -157,7 +167,7 @@ class DocxMarkdownWriter
                         $cellText[] = $this->plainTextFromRun($cellElement);
                     }
                 }
-                $cells[] = trim(implode(' ', $cellText));
+                $cells[] = str_replace('|', '\\|', trim(implode(' ', $cellText)));
             }
             $rows[] = $cells;
         }

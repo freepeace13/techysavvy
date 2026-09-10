@@ -98,6 +98,48 @@ class DocxMarkdownWriterTest extends TestCase
         $this->assertSame($expected, $markdown);
     }
 
+    public function test_it_converts_hyperlinks_standalone_and_inside_a_text_run(): void
+    {
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        $section->addLink('https://example.com', 'Example Site');
+
+        $run = $section->addTextRun();
+        $run->addText('See ');
+        $run->addLink('https://example.com/docs', 'the docs');
+        $run->addText(' for more.');
+
+        $markdown = (new DocxMarkdownWriter())->write($this->roundTrip($phpWord));
+
+        $expected = <<<'MD'
+        [Example Site](https://example.com)
+
+        See [the docs](https://example.com/docs) for more.
+        MD;
+
+        $this->assertSame($expected, $markdown);
+    }
+
+    public function test_it_escapes_pipe_characters_in_table_cells(): void
+    {
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+
+        $table = $section->addTable();
+        $table->addRow();
+        $table->addCell(2000)->addText('A | B');
+        $table->addCell(2000)->addText('Normal');
+
+        $markdown = (new DocxMarkdownWriter())->write($this->roundTrip($phpWord));
+
+        $expected = <<<'MD'
+        | A \| B | Normal |
+        | --- | --- |
+        MD;
+
+        $this->assertSame($expected, $markdown);
+    }
+
     public function test_it_placeholders_embedded_images(): void
     {
         $phpWord = new PhpWord();
