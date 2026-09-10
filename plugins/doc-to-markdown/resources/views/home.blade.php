@@ -82,6 +82,7 @@
         <x-ui::panel
             eyebrow="Result"
             title="Markdown"
+            class="min-w-0"
             x-show="state === 'success'"
             x-cloak
             x-transition:enter="transition ease-out duration-200"
@@ -107,7 +108,7 @@
 
             <div class="mt-3">
                 <div class="markdown-render rounded-brand border border-steel-200 bg-surface-muted p-5 text-sm text-ink" x-show="view === 'markdown'" x-html="markdownHtml"></div>
-                <pre class="rounded-brand border border-steel-200 bg-surface-muted p-5 font-mono text-xs text-ink whitespace-pre-wrap break-words [overflow-wrap:anywhere] max-w-full overflow-x-auto" x-show="view === 'raw'" x-cloak x-text="markdown"></pre>
+                <pre class="rounded-brand border border-steel-200 bg-surface-muted p-5 font-mono text-xs text-ink whitespace-pre-wrap [overflow-wrap:anywhere] max-w-full" x-show="view === 'raw'" x-cloak x-text="markdown"></pre>
             </div>
 
             <div class="mt-4 flex items-center gap-3">
@@ -311,10 +312,30 @@
                     },
 
                     copy() {
-                        navigator.clipboard.writeText(this.markdown).then(() => {
+                        const markedCopied = () => {
                             this.copied = true;
                             setTimeout(() => { this.copied = false; }, 2000);
-                        });
+                        };
+
+                        // Write both text/html and text/plain so pasting into a rich-text
+                        // target (email, docs, chat) renders actual headings/bullets/bold
+                        // instead of literal markdown syntax; plain-text targets still get
+                        // the markdown source. Falls back to plain text where the async
+                        // clipboard item API (or its html support) isn't available.
+                        if (window.ClipboardItem) {
+                            const item = new ClipboardItem({
+                                'text/html': new Blob([this.markdownHtml], { type: 'text/html' }),
+                                'text/plain': new Blob([this.markdown], { type: 'text/plain' }),
+                            });
+
+                            navigator.clipboard.write([item]).then(markedCopied, () => {
+                                navigator.clipboard.writeText(this.markdown).then(markedCopied);
+                            });
+
+                            return;
+                        }
+
+                        navigator.clipboard.writeText(this.markdown).then(markedCopied);
                     },
 
                     reset() {

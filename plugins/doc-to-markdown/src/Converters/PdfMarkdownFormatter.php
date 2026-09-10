@@ -9,15 +9,29 @@ namespace Techysavvy\DocToMarkdown\Converters;
  */
 class PdfMarkdownFormatter
 {
-    private const BULLET_PATTERN = '/^[•●▪\-\*]\s+(.*)$/u';
+    // Real unicode bullet glyphs are unambiguous markers on their own, so no
+    // following whitespace is required — some PDF generators (Google Docs
+    // among them) place a zero-width space, not a real space, after the
+    // glyph, which \s never matches.
+    private const UNICODE_BULLET_PATTERN = '/^[•●▪]\s*(.*)$/u';
+
+    // ASCII "-"/"*" need a real following space, otherwise a hyphenated word
+    // or an emphasis marker would be misread as a list item.
+    private const ASCII_BULLET_PATTERN = '/^[\-\*]\s+(.*)$/u';
 
     private const NUMBERED_PATTERN = '/^(\d+)[\.\)]\s+(.*)$/u';
 
     private const URL_PATTERN = '/\bhttps?:\/\/[^\s<>()]+[^\s<>().,;:!?]/i';
 
+    // Zero-width characters some PDF generators use as invisible separators
+    // (e.g. between a bullet glyph and its text). They carry no visible
+    // meaning and only interfere with the line-shape heuristics below.
+    private const INVISIBLE_CHARS_PATTERN = '/[\x{200B}\x{200C}\x{200D}\x{FEFF}]/u';
+
     public function format(string $text): string
     {
         $normalized = str_replace("\r\n", "\n", $text);
+        $normalized = preg_replace(self::INVISIBLE_CHARS_PATTERN, '', $normalized);
         $blocks = preg_split('/\n\s*\n/', $normalized);
 
         $rendered = array_map(fn (string $block) => $this->formatBlock($block), $blocks);
@@ -40,19 +54,37 @@ class PdfMarkdownFormatter
             return '## '.$this->linkify($lines[0]);
         }
 
-        if ($this->allMatch($lines, self::BULLET_PATTERN)) {
-            return implode("\n", array_map(
-                fn (string $line) => '- '.$this->linkify(preg_replace(self::BULLET_PATTERN, '$1', $line)),
-                $lines
-            ));
+        // Some documents run a section heading directly into its body with
+        // no blank line between them (no paragraph break in the PDF's text
+        // layer), so the block never reduces to a single line. An ALL-CAPS
+        // first line is still a strong, low-risk heading signal in that case.
+        if (count($lines) > 1 && $this->looksLikeAllCapsHeading($lines[0])) {
+            $heading = '## '.$this->linkify($lines[0]);
+            $rest = $this->formatBlock(implode("\n", array_slice($lines, 1)));
+
+            return $rest === '' ? $heading : $heading."\n\n".$rest;
         }
 
-        if ($this->allMatch($lines, self::NUMBERED_PATTERN)) {
-            return implode("\n", array_map(function (string $line) {
-                preg_match(self::NUMBERED_PATTERN, $line, $matches);
+        // A list rarely starts a block cleanly — it's often preceded, with no
+        // blank line, by a line or two of context (e.g. a job title above
+        // its bullet points), so the whole block is scanned for the first
+        // marked line rather than requiring $lines[0] itself to be one.
+        $bulletStart = $this->firstIndexMatching($lines, fn (string $line) => $this->matchBullet($line) !== null);
 
-                return $matches[1].'. '.$this->linkify($matches[2]);
-            }, $lines));
+        if ($bulletStart !== null) {
+            return $this->withLeadingContext($lines, $bulletStart, implode("\n", array_map(
+                fn (string $item) => '- '.$this->linkify($item),
+                $this->groupBulletItems(array_slice($lines, $bulletStart))
+            )));
+        }
+
+        $numberedStart = $this->firstIndexMatching($lines, fn (string $line) => preg_match(self::NUMBERED_PATTERN, $line) === 1);
+
+        if ($numberedStart !== null) {
+            return $this->withLeadingContext($lines, $numberedStart, implode("\n", array_map(
+                fn (array $item) => $item['number'].'. '.$this->linkify($item['text']),
+                $this->groupNumberedItems(array_slice($lines, $numberedStart))
+            )));
         }
 
         if (count($lines) >= 2 && ($table = $this->formatTable($lines)) !== null) {
@@ -68,23 +100,113 @@ class PdfMarkdownFormatter
             return false;
         }
 
-        if (preg_match(self::BULLET_PATTERN, $line) === 1 || preg_match(self::NUMBERED_PATTERN, $line) === 1) {
+        if ($this->matchBullet($line) !== null || preg_match(self::NUMBERED_PATTERN, $line) === 1) {
             return false;
         }
 
         return preg_match('/[.,;:!?]$/', $line) !== 1;
     }
 
-    /** @param string[] $lines */
-    private function allMatch(array $lines, string $pattern): bool
+    private function looksLikeAllCapsHeading(string $line): bool
     {
-        foreach ($lines as $line) {
-            if (preg_match($pattern, $line) !== 1) {
-                return false;
+        if (! $this->looksLikeHeading($line)) {
+            return false;
+        }
+
+        return preg_match('/\p{Ll}/u', $line) !== 1 && preg_match('/\p{Lu}/u', $line) === 1;
+    }
+
+    /**
+     * @param  string[]  $lines
+     * @param  callable(string): bool  $matches
+     */
+    private function firstIndexMatching(array $lines, callable $matches): ?int
+    {
+        foreach ($lines as $index => $line) {
+            if ($matches($line)) {
+                return $index;
             }
         }
 
-        return true;
+        return null;
+    }
+
+    /**
+     * Renders whatever preceded the list (context lines with no marker of
+     * their own, e.g. a job title above its bullets) as a plain line above it.
+     *
+     * @param  string[]  $lines
+     */
+    private function withLeadingContext(array $lines, int $listStart, string $list): string
+    {
+        $leading = array_slice($lines, 0, $listStart);
+
+        if ($leading === []) {
+            return $list;
+        }
+
+        return $this->linkify(implode(' ', $leading))."\n\n".$list;
+    }
+
+    /**
+     * Matches a line against either bullet glyph pattern and returns the
+     * item text, or null if the line isn't a bullet line at all.
+     */
+    private function matchBullet(string $line): ?string
+    {
+        if (preg_match(self::UNICODE_BULLET_PATTERN, $line, $matches) === 1) {
+            return $matches[1];
+        }
+
+        if (preg_match(self::ASCII_BULLET_PATTERN, $line, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return null;
+    }
+
+    /**
+     * A bullet's text often wraps onto following physical lines that carry
+     * no marker of their own — those are continuations of the item above,
+     * not separate items, so they're merged back in rather than dropped.
+     *
+     * @param  string[]  $lines
+     * @return string[]
+     */
+    private function groupBulletItems(array $lines): array
+    {
+        $items = [];
+
+        foreach ($lines as $line) {
+            $text = $this->matchBullet($line);
+
+            if ($text !== null) {
+                $items[] = $text;
+            } elseif ($items !== []) {
+                $items[count($items) - 1] .= ' '.$line;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param  string[]  $lines
+     * @return array<int, array{number: string, text: string}>
+     */
+    private function groupNumberedItems(array $lines): array
+    {
+        $items = [];
+
+        foreach ($lines as $line) {
+            if (preg_match(self::NUMBERED_PATTERN, $line, $matches) === 1) {
+                $items[] = ['number' => $matches[1], 'text' => $matches[2]];
+            } elseif ($items !== []) {
+                $items[count($items) - 1]['text'] .= ' '.$line;
+            }
+        }
+
+        return $items;
     }
 
     /** @param string[] $lines */
