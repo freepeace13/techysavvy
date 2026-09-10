@@ -91,7 +91,25 @@
             x-transition:leave-start="opacity-100 translate-x-0"
             x-transition:leave-end="opacity-0 translate-x-4"
         >
-            <div class="markdown-render rounded-brand border border-steel-200 bg-surface-muted p-5 text-sm text-ink" x-html="markdownHtml"></div>
+            <div class="flex items-center justify-between gap-3">
+                <x-brand::tabs
+                    model="view"
+                    :options="[
+                        ['value' => 'markdown', 'label' => 'Markdown'],
+                        ['value' => 'raw', 'label' => 'Raw'],
+                    ]"
+                />
+
+                <x-brand::button type="button" variant="secondary" @click="copy()">
+                    <span x-text="copied ? 'Copied' : 'Copy'"></span>
+                </x-brand::button>
+            </div>
+
+            <div class="mt-3">
+                <div class="markdown-render rounded-brand border border-steel-200 bg-surface-muted p-5 text-sm text-ink" x-show="view === 'markdown'" x-html="markdownHtml"></div>
+                <pre class="rounded-brand border border-steel-200 bg-surface-muted p-5 font-mono text-xs text-ink whitespace-pre-wrap break-words [overflow-wrap:anywhere] max-w-full overflow-x-auto" x-show="view === 'raw'" x-cloak x-text="markdown"></pre>
+            </div>
+
             <div class="mt-4 flex items-center gap-3">
                 <x-brand::button type="button" @click="download()">Download .md</x-brand::button>
                 <button
@@ -211,6 +229,8 @@
                     markdownHtml: '',
                     downloadName: 'converted.md',
                     errorMessage: '',
+                    view: 'markdown', // markdown | raw
+                    copied: false,
 
                     handleSelect(event) {
                         this.setFile(event.target.files[0] ?? null);
@@ -290,6 +310,13 @@
                         URL.revokeObjectURL(url);
                     },
 
+                    copy() {
+                        navigator.clipboard.writeText(this.markdown).then(() => {
+                            this.copied = true;
+                            setTimeout(() => { this.copied = false; }, 2000);
+                        });
+                    },
+
                     reset() {
                         this.state = 'idle';
                         this.file = null;
@@ -297,6 +324,8 @@
                         this.markdown = '';
                         this.markdownHtml = '';
                         this.errorMessage = '';
+                        this.view = 'markdown';
+                        this.copied = false;
                         this.$refs.fileInput.value = '';
                     },
                 };

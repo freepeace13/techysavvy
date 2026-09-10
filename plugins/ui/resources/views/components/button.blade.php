@@ -6,6 +6,7 @@
     $variants = [
         'primary' => 'bg-signal-500 text-white hover:bg-signal-600',
         'secondary' => 'border border-steel-300 bg-surface text-ink hover:border-signal-300 hover:text-signal-600',
+        'ghost' => 'text-ink-muted hover:text-ink',
     ];
 
     $classes = $base . ' ' . ($variants[$variant] ?? $variants['primary']);
