@@ -11,7 +11,7 @@ class HomeViewTest extends TestCase
         $response = $this->get(route('doc-to-markdown.home'));
 
         $response->assertOk();
-        $response->assertSee('Convert to Markdown');
+        $response->assertSee('Drop a .docx or .pdf here');
         $response->assertSee('PDF conversion preserves text, not formatting');
     }
 }
