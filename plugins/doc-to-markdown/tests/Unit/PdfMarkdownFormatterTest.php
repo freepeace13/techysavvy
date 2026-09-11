@@ -106,4 +106,34 @@ class PdfMarkdownFormatterTest extends TestCase
             $markdown
         );
     }
+
+    public function test_it_promotes_a_title_case_heading_even_with_no_blank_line_before_its_body(): void
+    {
+        // Resumes/reports commonly use Title Case section headings that run
+        // straight into their body with no blank-line paragraph break.
+        $markdown = (new PdfMarkdownFormatter)->format("Work Experience\nSenior Engineer at Example Corp.");
+
+        $this->assertSame("## Work Experience\n\nSenior Engineer at Example Corp.", $markdown);
+    }
+
+    public function test_it_promotes_a_title_case_heading_with_lowercase_connector_words(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("Terms and Conditions of Use\nThis section explains the details.");
+
+        $this->assertSame("## Terms and Conditions of Use\n\nThis section explains the details.", $markdown);
+    }
+
+    public function test_it_does_not_promote_a_title_case_looking_line_ending_in_punctuation(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("Thank You For Your Time.\nWe appreciate your business.");
+
+        $this->assertSame('Thank You For Your Time. We appreciate your business.', $markdown);
+    }
+
+    public function test_it_does_not_promote_an_ordinary_sentence_with_no_blank_line_before_its_body(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("Signed the deal\nwith great fanfare and lots of press.");
+
+        $this->assertSame('Signed the deal with great fanfare and lots of press.', $markdown);
+    }
 }
