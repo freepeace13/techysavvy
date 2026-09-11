@@ -63,9 +63,14 @@ Things worth knowing:
 
 ## Caveats
 
-- **PDF conversion preserves text, not formatting.** `smalot/pdfparser`
-  extracts a text layer; headings, tables, and styling in the original PDF
-  do not survive as Markdown structure. The UI says so on the page.
+- **PDF conversion infers structure, it doesn't read it.** `smalot/pdfparser`
+  only extracts a flat text layer — PDFs carry no semantic markup — so
+  `PdfMarkdownFormatter` reconstructs headings, bullet/numbered lists, and
+  simple tables from line-shape heuristics (line length, trailing
+  punctuation, ALL-CAPS or Title Case, column alignment) rather than real
+  document structure. It won't be perfect on complex layouts, and styling
+  (bold/italic, fonts, colors) never survives, since the text layer carries
+  none of it. The UI says so on the page.
 - A PDF with no text layer (a scan, an image-only export) yields nothing
   useful — there is no OCR here.
 - Markdown is rendered with markdown-it's `html: false`, so raw HTML in a

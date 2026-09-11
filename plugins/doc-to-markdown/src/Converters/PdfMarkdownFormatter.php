@@ -21,6 +21,11 @@ class PdfMarkdownFormatter
 
     private const NUMBERED_PATTERN = '/^(\d+)[\.\)]\s+(.*)$/u';
 
+    // Lowercase words a Title Case heading may still contain (e.g. "Terms
+    // and Conditions of Use") without failing the "every word capitalized"
+    // check below.
+    private const TITLE_CASE_CONNECTORS = ['and', 'of', 'the', 'in', 'for', 'to', '&'];
+
     private const URL_PATTERN = '/\bhttps?:\/\/[^\s<>()]+[^\s<>().,;:!?]/i';
 
     // Zero-width characters some PDF generators use as invisible separators
@@ -54,22 +59,27 @@ class PdfMarkdownFormatter
             return '## '.$this->linkify($lines[0]);
         }
 
-        // Some documents run a section heading directly into its body with
-        // no blank line between them (no paragraph break in the PDF's text
-        // layer), so the block never reduces to a single line. An ALL-CAPS
-        // first line is still a strong, low-risk heading signal in that case.
-        if (count($lines) > 1 && $this->looksLikeAllCapsHeading($lines[0])) {
-            $heading = '## '.$this->linkify($lines[0]);
-            $rest = $this->formatBlock(implode("\n", array_slice($lines, 1)));
-
-            return $rest === '' ? $heading : $heading."\n\n".$rest;
-        }
-
         // A list rarely starts a block cleanly — it's often preceded, with no
         // blank line, by a line or two of context (e.g. a job title above
         // its bullet points), so the whole block is scanned for the first
         // marked line rather than requiring $lines[0] itself to be one.
         $bulletStart = $this->firstIndexMatching($lines, fn (string $line) => $this->matchBullet($line) !== null);
+        $numberedStart = $this->firstIndexMatching($lines, fn (string $line) => preg_match(self::NUMBERED_PATTERN, $line) === 1);
+
+        // Some documents run a section heading directly into its body with
+        // no blank line between them (no paragraph break in the PDF's text
+        // layer), so the block never reduces to a single line. An ALL-CAPS
+        // or Title Case first line is a strong, low-risk heading signal in
+        // that case — but only when the rest of the block isn't itself a
+        // list, where $lines[0] is more likely leading context (e.g. a job
+        // title above its bullets) than a heading.
+        if (count($lines) > 1 && $bulletStart === null && $numberedStart === null
+            && $this->looksLikeHeadingWithoutBreak($lines[0])) {
+            $heading = '## '.$this->linkify($lines[0]);
+            $rest = $this->formatBlock(implode("\n", array_slice($lines, 1)));
+
+            return $rest === '' ? $heading : $heading."\n\n".$rest;
+        }
 
         if ($bulletStart !== null) {
             return $this->withLeadingContext($lines, $bulletStart, implode("\n", array_map(
@@ -77,8 +87,6 @@ class PdfMarkdownFormatter
                 $this->groupBulletItems(array_slice($lines, $bulletStart))
             )));
         }
-
-        $numberedStart = $this->firstIndexMatching($lines, fn (string $line) => preg_match(self::NUMBERED_PATTERN, $line) === 1);
 
         if ($numberedStart !== null) {
             return $this->withLeadingContext($lines, $numberedStart, implode("\n", array_map(
@@ -104,6 +112,12 @@ class PdfMarkdownFormatter
             return false;
         }
 
+        // A run of 2+ spaces is the same column-alignment signal formatTable()
+        // splits on — such a line is table data/header, not a heading.
+        if (preg_match('/\s{2,}/u', $line) === 1) {
+            return false;
+        }
+
         return preg_match('/[.,;:!?]$/', $line) !== 1;
     }
 
@@ -114,6 +128,42 @@ class PdfMarkdownFormatter
         }
 
         return preg_match('/\p{Ll}/u', $line) !== 1 && preg_match('/\p{Lu}/u', $line) === 1;
+    }
+
+    /**
+     * A Title Case line (every word capitalized, aside from a small set of
+     * lowercase connector words) is as strong a heading signal as ALL-CAPS
+     * for the "no blank line before body" case — e.g. "Work Experience" or
+     * "Terms and Conditions of Use" running directly into body text.
+     */
+    private function looksLikeTitleCaseHeading(string $line): bool
+    {
+        if (! $this->looksLikeHeading($line)) {
+            return false;
+        }
+
+        $words = preg_split('/\s+/u', trim($line));
+
+        if ($words === false || count($words) < 2) {
+            return false;
+        }
+
+        foreach ($words as $word) {
+            if (in_array(mb_strtolower($word), self::TITLE_CASE_CONNECTORS, true)) {
+                continue;
+            }
+
+            if (preg_match('/^\p{Lu}/u', $word) !== 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function looksLikeHeadingWithoutBreak(string $line): bool
+    {
+        return $this->looksLikeAllCapsHeading($line) || $this->looksLikeTitleCaseHeading($line);
     }
 
     /**
