@@ -6,23 +6,32 @@ see the repo root `CLAUDE.md` for the overall monorepo shape.
 
 ## Status
 
-**Skeleton.** The plugin boots, registers its home-page card, and serves a
-placeholder page carrying the "why it is safe to paste your env here" note.
-The diff, secret detection, and example generation are **Planned** — see
-[`docs/PRD.md`](docs/PRD.md).
+**v1 implemented.** Paste two `.env` files at `/env-diff` to get:
 
-## Privacy model (Planned behavior)
+- missing and extra keys between them;
+- empty and placeholder values (`changeme`, `xxx`, `your-…`, `<…>`);
+- likely real secrets (known key formats, high-entropy values, sensitive key
+  names), reported with a masked preview only;
+- duplicate keys and lines that aren't `KEY=value`;
+- a copyable `.env.example` generated from file A (values stripped, comments
+  and order kept).
 
-The page's safety note promises that:
+See [`docs/PRD.md`](docs/PRD.md) for scope and non-goals.
+
+## Privacy model
+
+The page's "why it is safe to paste your env here" note promises that:
 
 - input is parsed by JavaScript in the visitor's browser and never sent to the server;
 - nothing is stored, logged, or written to `localStorage`;
 - the page loads no third-party scripts, analytics, or trackers;
 - the visitor can verify this in the browser's Network tab.
 
-These claims are only true once the feature is built client-side, so any
-implementation must uphold them (no `fetch`/form POST of the input, no
-third-party assets on this page).
+How the code upholds this: the logic is plain JS in `resources/js/`, the page
+has no form and no server route that accepts input (`POST /env-diff` is a 405),
+and tests enforce it — the built bundle is scanned for `fetch`, XHR, beacons,
+WebSockets and browser storage APIs, and the rendered page is checked for
+inline scripts and third-party assets. Any change must keep those true.
 
 ## Installation / wiring
 
@@ -40,9 +49,23 @@ composer update techysavvy/env-diff --working-dir=host
 |---|---|---|
 | GET | `/env-diff` | `env-diff.home` |
 
+## Assets
+
+The plugin owns its JS build (`package.json` + `vite.config.js`, library mode,
+IIFE, no runtime dependencies). `make install` builds it; by hand from the repo
+root:
+
+```bash
+npm install --prefix plugins/env-diff
+npm run build --prefix plugins/env-diff     # -> resources/dist/env-diff.js (gitignored)
+```
+
+The service provider declares the bundle with `AssetRegistry::register()` and
+the page requests it with `@pluginAssets('env-diff')`; core serves it.
+
 ## Configuration and dependencies
 
-None. No config keys, env vars, migrations, or extra packages.
+No config keys, env vars, migrations, or runtime packages.
 
 ## Layout
 
@@ -51,12 +74,27 @@ composer.json
 src/EnvDiff.php                     ToolContract implementation
 src/EnvDiffServiceProvider.php      routes, views, ToolRegistry registration
 routes/web.php
-resources/views/home.blade.php      placeholder page + safety note
+resources/views/home.blade.php      page, results UI, safety note
+resources/js/parse.js               dotenv parser
+resources/js/analyze.js             diff, placeholder and secret heuristics
+resources/js/example.js             .env.example generator
+resources/js/env-diff.js            Alpine component (window.envDiff)
+tests/js/                           node:test suites (logic + built bundle)
+tests/Feature/                      Testbench page tests
 docs/PRD.md
 ```
 
 ## Tests
 
-No plugin-level tests yet (no logic). The host's registry-driven
-`ToolListingTest` covers the card and route. Add plugin tests when the
-diff/detection logic lands.
+```bash
+npm run build && npm test          # JS logic + built-bundle checks
+composer install && vendor/bin/phpunit   # page tests (Testbench)
+```
+
+The host's registry-driven `ToolListingTest` covers the home-page card.
+
+## Heuristic limits
+
+Secret detection is deliberately conservative and labelled "likely": it can
+miss unusual secrets and can flag benign high-entropy values. It is a
+sanity check, not a scanner — don't rely on it to certify a file is clean.

@@ -50,10 +50,11 @@ None planned. Parsing and heuristics in plain JS, bundled through core's asset r
 
 - `GET /env-diff` (`env-diff.home`): two `<x-ui::panel>` textareas, results panel, generated-example panel, the safety `<x-ui::alert>`.
 
-## Open questions
+## Decisions
 
-- Which secret patterns ship in v1 (prefix list vs entropy threshold)?
-- Should the safety note also be linked from the home-page card?
+- Secret patterns in v1: a narrow list of well-known key formats, then entropy (≥20 chars, ≥3.5 bits, letters and digits), then sensitive key names with non-trivial values. Everything is labelled "likely".
+- The safety note lives on the page only; it is not linked from the home-page card.
+- The example is generated from file A only; file B is compared, not rewritten.
 
 ## Success criteria
 
@@ -61,7 +62,7 @@ None planned. Parsing and heuristics in plain JS, bundled through core's asset r
 - DevTools shows zero requests triggered by pasting or diffing.
 - Parser and heuristics have unit tests (JS test runner in the plugin).
 
-## Milestones
+## Milestones (all done in v1)
 
 1. Client-side parser + tests (comments, quotes, `export`, duplicates).
 2. Key diff (missing/extra) and results UI.

@@ -3,6 +3,8 @@
 namespace Techysavvy\EnvDiff;
 
 use Illuminate\Support\ServiceProvider;
+use Techysavvy\Core\Assets\AssetBundle;
+use Techysavvy\Core\Assets\AssetRegistry;
 use Techysavvy\Core\ToolRegistry;
 
 class EnvDiffServiceProvider extends ServiceProvider
@@ -13,5 +15,10 @@ class EnvDiffServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'env-diff');
 
         $this->app->make(ToolRegistry::class)->register(new EnvDiff());
+
+        $this->app->make(AssetRegistry::class)->register('env-diff', new AssetBundle(
+            directory: __DIR__.'/../resources/dist',
+            scripts: ['env-diff.js'],
+        ));
     }
 }
