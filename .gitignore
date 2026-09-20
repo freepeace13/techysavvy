@@ -3,7 +3,7 @@
 .idea
 .vscode
 
-docs/
+/docs/
 issues/
 
 host/.env
