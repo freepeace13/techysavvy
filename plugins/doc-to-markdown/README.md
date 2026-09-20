@@ -60,6 +60,8 @@ Things worth knowing:
 | Env var | Config key | Default | Meaning |
 |---|---|---|---|
 | `DOC_TO_MARKDOWN_MAX_UPLOAD_KB` | `max_upload_kb` | `10240` (10MB) | Max upload size in kilobytes. |
+| `DOC_TO_MARKDOWN_MAX_EXECUTION_SECONDS` | `max_execution_seconds` | `60` | Time budget for converting one upload. |
+| `DOC_TO_MARKDOWN_RATE_LIMIT` | `rate_limit_per_minute` | `20` | Conversions per minute, per client IP. |
 
 ## Caveats
 
@@ -76,8 +78,19 @@ Things worth knowing:
 - Markdown is rendered with markdown-it's `html: false`, so raw HTML in a
   converted document is escaped rather than passed through to the preview.
 - Upload size is also bound by PHP's `upload_max_filesize` and
-  `post_max_size` ini settings, which this plugin cannot override. Set them
-  at least as high as `DOC_TO_MARKDOWN_MAX_UPLOAD_KB`.
+  `post_max_size` ini settings (and your web server's body limit, e.g.
+  nginx `client_max_body_size`), which this plugin cannot override. The page
+  advertises, and validates client-side, the lower of the configured limit
+  and the PHP ini limits; raise the ini/server values to allow more.
+- A file with no extractable text (a scan) is rejected with a clear message
+  rather than returned as an empty conversion.
+- PDF headings are all rendered as `##`; the text layer has no level
+  information to infer a hierarchy from. Line-end hyphenation is undone
+  (`inter-`/`national` → `international`), which can occasionally drop the
+  hyphen of a genuine compound split across lines.
+- The page's Alpine component lives in `resources/js/component.js` and ships
+  in the bundle; if the bundle isn't built and published (`make install`),
+  the page shows an explicit "script failed to load" error.
 - This plugin's `routes/web.php` explicitly wraps its routes in Laravel's
   `web` middleware group. Routes registered via a plugin `ServiceProvider`'s
   `loadRoutesFrom()` do **not** inherit that group automatically — only
@@ -98,7 +111,8 @@ vendor/bin/phpunit
 
 The built bundle has its own smoke test — it evaluates the real build
 output in a `node:vm` sandbox and asserts `window.docToMarkdownRender`
-renders Markdown. It requires `npm run build` to have run first:
+renders Markdown; the other JS tests cover the upload helpers and the
+component's copy/error paths. It requires `npm run build` to have run first:
 
 ```bash
 npm run build

@@ -58,4 +58,21 @@ class PdfConverterTest extends TestCase
 
         $this->assertSame($expected, $markdown);
     }
+
+    public function test_it_stitches_a_paragraph_that_runs_across_a_page_break(): void
+    {
+        $pdf = MinimalPdfBuilder::build([
+            ['The sentence starts on page one and,'],
+            ['finishes on page two.'],
+        ]);
+
+        $path = tempnam(sys_get_temp_dir(), 'pdf-converter-test-').'.pdf';
+        file_put_contents($path, $pdf);
+
+        $markdown = (new PdfConverter(new PdfMarkdownFormatter))->convert($path);
+
+        unlink($path);
+
+        $this->assertSame('The sentence starts on page one and, finishes on page two.', $markdown);
+    }
 }

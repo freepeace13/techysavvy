@@ -71,17 +71,33 @@ class HomeViewTest extends TestCase
         $this->assertMatchesRegularExpression('~\.markdown-render a\s*\{[^}]*color~', $html);
     }
 
-    public function test_the_copy_button_writes_both_html_and_plain_text_to_the_clipboard(): void
+    // Copy-to-clipboard behaviour (html + plain text, fallbacks) lives in the
+    // bundle now and is covered by tests/js/component.test.js.
+
+    public function test_the_page_advertises_the_effective_upload_limit_and_passes_it_to_the_component(): void
     {
-        // Copying only the raw markdown source means pasting into a rich-text
-        // target (email, docs, chat) shows literal "#"/"*" syntax instead of
-        // rendered headings/bullets. The clipboard write must include the
-        // rendered HTML alongside the plain-text markdown.
+        config(['doc-to-markdown.max_upload_kb' => 2048]);
+
         $html = $this->get(route('doc-to-markdown.home'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('new ClipboardItem(', $html);
-        $this->assertStringContainsString("'text/html': new Blob([this.markdownHtml]", $html);
-        $this->assertStringContainsString("'text/plain': new Blob([this.markdown]", $html);
+        $this->assertStringContainsString('2 MB', $html);
+        $this->assertStringContainsString('maxBytes: 2097152', $html);
+    }
+
+    public function test_the_page_has_a_fallback_when_the_bundle_fails_to_load(): void
+    {
+        $this->get(route('doc-to-markdown.home'))
+            ->assertOk()
+            ->assertSee('The converter script failed to load', false);
+    }
+
+    public function test_the_progress_bar_and_errors_are_exposed_to_assistive_tech(): void
+    {
+        $html = $this->get(route('doc-to-markdown.home'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('role="progressbar"', $html);
+        $this->assertStringContainsString('role="alert"', $html);
+        $this->assertStringContainsString('aria-live="polite"', $html);
     }
 
     private function makePublicPath(): string

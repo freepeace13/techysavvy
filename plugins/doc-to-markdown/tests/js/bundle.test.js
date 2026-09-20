@@ -44,3 +44,13 @@ test('raw HTML in the source is escaped, not passed through', () => {
 
     assert.doesNotMatch(html, /<script>/);
 });
+
+test('the bundle exposes the docToMarkdown Alpine component factory', () => {
+    const { docToMarkdown } = loadBundle();
+
+    assert.equal(typeof docToMarkdown, 'function');
+
+    const component = docToMarkdown({ action: '/x', maxBytes: 1 });
+    assert.equal(component.state, 'idle');
+    assert.equal(typeof component.copy, 'function');
+});
