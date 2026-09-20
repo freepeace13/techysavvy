@@ -7,6 +7,8 @@ install:
 	npm run build --prefix plugins/doc-to-markdown
 	npm install --prefix plugins/drop-share
 	npm run build --prefix plugins/drop-share
+	npm install --prefix plugins/env-diff
+	npm run build --prefix plugins/env-diff
 	npm install --prefix plugins/photo-tweaker
 	npm run build --prefix plugins/photo-tweaker
 	npm install --prefix host

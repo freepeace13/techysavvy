@@ -1,0 +1,43 @@
+{
+    "name": "techysavvy/env-diff",
+    "description": "Compare .env files, spot drift and leaked secrets, and generate a clean .env.example \u2014 entirely in the browser.",
+    "type": "library",
+    "version": "1.0.0",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^13.0",
+        "techysavvy/core": "*",
+        "techysavvy/ui": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.2",
+        "phpunit/phpunit": "^12.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Techysavvy\\EnvDiff\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Techysavvy\\EnvDiff\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techysavvy\\EnvDiff\\EnvDiffServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

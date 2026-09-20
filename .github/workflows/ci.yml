@@ -34,6 +34,7 @@ jobs:
           npm install --prefix plugins/ui
           npm install --prefix plugins/doc-to-markdown
           npm install --prefix plugins/drop-share
+          npm install --prefix plugins/env-diff
           npm install --prefix plugins/photo-tweaker
           npm install --prefix host
 
@@ -47,10 +48,13 @@ jobs:
         run: |
           npm run build --prefix plugins/doc-to-markdown
           npm run build --prefix plugins/drop-share
+          npm run build --prefix plugins/env-diff
           npm run build --prefix plugins/photo-tweaker
 
       - name: Test plugin assets
-        run: npm test --prefix plugins/doc-to-markdown
+        run: |
+          npm test --prefix plugins/doc-to-markdown
+          npm test --prefix plugins/env-diff
 
       - name: Copy environment file
         run: cp host/.env.example host/.env
