@@ -21,6 +21,32 @@ the repo root `CLAUDE.md` for the overall monorepo shape.
    always treated as not-found on read, even if the schedule hasn't run
    yet, so a slow scheduler never serves an expired file.
 
+## Installation / assets
+
+This plugin owns its front end: `resources/js/drop-share.js` (which imports
+`resources/css/drop-share.css`) is built by the plugin's own Vite config, in
+library mode, into `resources/dist/drop-share.js` and `drop-share.css`. `make install`
+at the repo root runs the whole sequence; by hand, from the repo root:
+
+```bash
+npm install --prefix plugins/drop-share
+npm run build --prefix plugins/drop-share     # -> resources/dist/drop-share.{js,css}
+```
+
+Things worth knowing:
+
+- **`resources/dist/` is generated and gitignored.** Never edit it; the
+  sources are in `resources/js/` and `resources/css/`. Editing them needs only
+  a rebuild — core serves `resources/dist/` directly, so there is no publish
+  step. Until the build has run, the page's asset URLs 404.
+- The script is a plain classic tag that sets `window.dropShareUpload` for the page's
+  `x-data`; it runs before the layout's deferred Alpine start.
+- The plugin only *declares* the bundle (`AssetRegistry::register()` with an
+  `AssetBundle` in its service provider) and requests it with
+  `@pluginAssets('drop-share')`; serving (`/_plugin-assets/drop-share/…`, fingerprinted
+  with `?v=`) and tag emission belong to `plugins/core`.
+- `host/`'s own Vite build knows nothing about this plugin, and must not.
+
 ## Configuration
 
 All settings live in `config/drop-share.php` and are env-overridable —

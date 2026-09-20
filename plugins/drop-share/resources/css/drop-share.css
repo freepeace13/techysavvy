@@ -1,0 +1,60 @@
+[x-cloak] { display: none !important; }
+
+/* Ticket stub — two half-circle notches bitten out of the edges,
+   echoing the punch-hole tag already used on tool cards. */
+.ticket-notch::before,
+.ticket-notch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    background: var(--color-surface);
+    border-radius: 9999px;
+    transform: translateY(-50%);
+}
+.ticket-notch::before { left: -7px; }
+.ticket-notch::after { right: -7px; }
+
+.gauge-fill {
+    background-image: repeating-linear-gradient(
+        45deg,
+        var(--color-signal-500) 0 10px,
+        var(--color-signal-300) 10px 20px
+    );
+    background-size: 28px 28px;
+    animation: gauge-stripes 0.8s linear infinite;
+    transition: width 150ms ease-out;
+}
+
+@keyframes gauge-stripes {
+    to { background-position: 28px 0; }
+}
+
+.animate-stamp-in {
+    animation: stamp-in 420ms cubic-bezier(.2, 1.6, .4, 1) both;
+}
+@keyframes stamp-in {
+    0% { opacity: 0; transform: scale(1.25) rotate(-6deg); }
+    60% { opacity: 1; transform: scale(0.97) rotate(1.5deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.animate-shake {
+    animation: shake 380ms ease-in-out both;
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gauge-fill { animation: none; }
+    .animate-stamp-in, .animate-shake {
+        animation-duration: 1ms;
+        animation-iteration-count: 1;
+    }
+}
