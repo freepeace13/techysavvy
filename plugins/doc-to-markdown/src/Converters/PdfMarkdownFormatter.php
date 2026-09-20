@@ -26,7 +26,12 @@ class PdfMarkdownFormatter
     // check below.
     private const TITLE_CASE_CONNECTORS = ['and', 'of', 'the', 'in', 'for', 'to', '&'];
 
-    private const URL_PATTERN = '/\bhttps?:\/\/[^\s<>()]+[^\s<>().,;:!?]/i';
+    // Balanced "(...)" groups are allowed inside a URL (e.g. Wikipedia
+    // links); trailing sentence punctuation is trimmed off afterwards.
+    private const URL_PATTERN = '/\bhttps?:\/\/(?:[^\s<>()\[\]]|\([^\s<>()]*\))+/i';
+
+    // A line that is only a page number ("12", "Page 3", "3 of 10").
+    private const PAGE_NUMBER_PATTERN = '/^(page\s+)?\d+(\s*(of|\/)\s*\d+)?$/iu';
 
     // Zero-width characters some PDF generators use as invisible separators
     // (e.g. between a bullet glyph and its text). They carry no visible
@@ -35,7 +40,9 @@ class PdfMarkdownFormatter
 
     public function format(string $text): string
     {
-        $normalized = str_replace("\r\n", "\n", $text);
+        // Some PDF encodings yield invalid UTF-8, which makes every /u regex
+        // below return null and would silently blank the page.
+        $normalized = mb_scrub(str_replace("\r\n", "\n", $text));
         $normalized = preg_replace(self::INVISIBLE_CHARS_PATTERN, '', $normalized);
         $blocks = preg_split('/\n\s*\n/', $normalized);
 
@@ -52,6 +59,11 @@ class PdfMarkdownFormatter
         ));
 
         if ($lines === []) {
+            return '';
+        }
+
+        // A lone page number is furniture, not content.
+        if (count($lines) === 1 && preg_match(self::PAGE_NUMBER_PATTERN, $lines[0]) === 1) {
             return '';
         }
 
@@ -99,7 +111,7 @@ class PdfMarkdownFormatter
             return $table;
         }
 
-        return $this->linkify(implode(' ', $lines));
+        return $this->escapeBlockStart($this->linkify($this->joinLines($lines)));
     }
 
     private function looksLikeHeading(string $line): bool
@@ -115,6 +127,11 @@ class PdfMarkdownFormatter
         // A run of 2+ spaces is the same column-alignment signal formatTable()
         // splits on — such a line is table data/header, not a heading.
         if (preg_match('/\s{2,}/u', $line) === 1) {
+            return false;
+        }
+
+        // No letters means a page number, rule or stray symbol, not a heading.
+        if (preg_match('/\p{L}/u', $line) !== 1) {
             return false;
         }
 
@@ -148,17 +165,22 @@ class PdfMarkdownFormatter
             return false;
         }
 
+        $capitalized = 0;
+
         foreach ($words as $word) {
             if (in_array(mb_strtolower($word), self::TITLE_CASE_CONNECTORS, true)) {
                 continue;
             }
 
-            if (preg_match('/^\p{Lu}/u', $word) !== 1) {
+            if (preg_match('/^\p{Lu}/u', $word) === 1) {
+                $capitalized++;
+            } elseif (preg_match('/^[\p{Ll}]/u', $word) === 1) {
                 return false;
             }
+            // Words opening with a digit or symbol ("2024", "(Draft)") are neutral.
         }
 
-        return true;
+        return $capitalized > 0;
     }
 
     private function looksLikeHeadingWithoutBreak(string $line): bool
@@ -195,7 +217,7 @@ class PdfMarkdownFormatter
             return $list;
         }
 
-        return $this->linkify(implode(' ', $leading))."\n\n".$list;
+        return $this->escapeBlockStart($this->linkify($this->joinLines($leading)))."\n\n".$list;
     }
 
     /**
@@ -233,11 +255,37 @@ class PdfMarkdownFormatter
             if ($text !== null) {
                 $items[] = $text;
             } elseif ($items !== []) {
-                $items[count($items) - 1] .= ' '.$line;
+                $items[count($items) - 1] = $this->joinWrapped($items[count($items) - 1], $line);
             }
         }
 
         return $items;
+    }
+
+    /**
+     * Joins a wrapped line onto the text above it. A word split by a line-end
+     * hyphen ("inter-" / "national") is rejoined; a genuine compound split
+     * the same way loses its hyphen, which is the lesser evil.
+     */
+    private function joinWrapped(string $text, string $next): string
+    {
+        if (preg_match('/\p{L}-$/u', $text) === 1 && preg_match('/^\p{Ll}/u', $next) === 1) {
+            return substr($text, 0, -1).$next;
+        }
+
+        return $text.' '.$next;
+    }
+
+    /** @param string[] $lines */
+    private function joinLines(array $lines): string
+    {
+        $text = array_shift($lines);
+
+        foreach ($lines as $line) {
+            $text = $this->joinWrapped($text, $line);
+        }
+
+        return $text;
     }
 
     /**
@@ -252,7 +300,7 @@ class PdfMarkdownFormatter
             if (preg_match(self::NUMBERED_PATTERN, $line, $matches) === 1) {
                 $items[] = ['number' => $matches[1], 'text' => $matches[2]];
             } elseif ($items !== []) {
-                $items[count($items) - 1]['text'] .= ' '.$line;
+                $items[count($items) - 1]['text'] = $this->joinWrapped($items[count($items) - 1]['text'], $line);
             }
         }
 
@@ -289,12 +337,38 @@ class PdfMarkdownFormatter
         return implode("\n", $lines);
     }
 
+    /**
+     * Turns bare URLs into Markdown links and escapes Markdown syntax in the
+     * text around them, so PDF text like "snake_case" or "<tag>" renders as
+     * written. URLs are cut out first so their own underscores survive.
+     */
     private function linkify(string $text): string
     {
-        return preg_replace_callback(
-            self::URL_PATTERN,
-            fn (array $matches) => '['.$matches[0].']('.$matches[0].')',
-            $text
-        );
+        preg_match_all(self::URL_PATTERN, $text, $found, PREG_OFFSET_CAPTURE);
+
+        $out = '';
+        $cursor = 0;
+
+        foreach ($found[0] as [$match, $offset]) {
+            $url = rtrim($match, '.,;:!?');
+            $trailing = substr($match, strlen($url));
+
+            $out .= $this->escapeInline(substr($text, $cursor, $offset - $cursor));
+            $out .= '['.$url.']('.$url.')'.$trailing;
+            $cursor = $offset + strlen($match);
+        }
+
+        return $out.$this->escapeInline(substr($text, $cursor));
+    }
+
+    private function escapeInline(string $text): string
+    {
+        return preg_replace('/([\\\\`*_\[\]<])/', '\\\\$1', $text);
+    }
+
+    /** Text that merely starts with "#", ">" or "+ " must not turn into a heading, quote or list. */
+    private function escapeBlockStart(string $text): string
+    {
+        return preg_replace('/^(#{1,6}(?=\s|$)|>|\+(?=\s))/u', '\\\\$1', $text);
     }
 }

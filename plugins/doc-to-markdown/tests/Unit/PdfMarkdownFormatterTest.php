@@ -136,4 +136,55 @@ class PdfMarkdownFormatterTest extends TestCase
 
         $this->assertSame('Signed the deal with great fanfare and lots of press.', $markdown);
     }
+
+    public function test_it_drops_a_lone_page_number(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("Body text here.\n\n12\n\nPage 3 of 10");
+
+        $this->assertSame('Body text here.', $markdown);
+    }
+
+    public function test_it_rejoins_a_word_split_by_a_line_end_hyphen(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("An inter-\nnational effort.");
+
+        $this->assertSame('An international effort.', $markdown);
+    }
+
+    public function test_it_keeps_balanced_parentheses_inside_a_url(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format('See https://en.wikipedia.org/wiki/Foo_(bar) today.');
+
+        $this->assertSame('See [https://en.wikipedia.org/wiki/Foo_(bar)](https://en.wikipedia.org/wiki/Foo_(bar)) today.', $markdown);
+    }
+
+    public function test_it_escapes_markdown_syntax_in_plain_text_but_not_inside_urls(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format('Use my_var and <b> at https://example.com/a_b now.');
+
+        $this->assertSame('Use my\_var and \<b> at [https://example.com/a_b](https://example.com/a_b) now.', $markdown);
+    }
+
+    public function test_it_escapes_a_paragraph_that_starts_with_a_hash(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("#hashtag isn't a heading, but # nor is this\nsecond line");
+
+        $this->assertSame("#hashtag isn't a heading, but # nor is this second line", $markdown);
+        $this->assertSame('\# 5 items were counted in the first pass, then more.', (new PdfMarkdownFormatter)->format('# 5 items were counted in the first pass, then more.'));
+    }
+
+    public function test_it_recognises_a_title_case_heading_that_starts_with_a_number(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("2024 Annual Report\nRevenue grew this year.");
+
+        $this->assertSame("## 2024 Annual Report\n\nRevenue grew this year.", $markdown);
+    }
+
+    public function test_it_survives_invalid_utf8_in_the_text_layer(): void
+    {
+        $markdown = (new PdfMarkdownFormatter)->format("Caf\xE9 menu today.\n\nSecond paragraph.");
+
+        $this->assertStringContainsString('Second paragraph.', $markdown);
+        $this->assertStringContainsString('menu today.', $markdown);
+    }
 }

@@ -2,7 +2,6 @@
     "name": "techysavvy/doc-to-markdown",
     "description": "Convert a Word document or PDF into Markdown, right in the browser.",
     "type": "library",
-    "version": "1.0.0",
     "repositories": [
         {
             "type": "path",
