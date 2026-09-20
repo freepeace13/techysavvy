@@ -22,15 +22,26 @@ class AssetRouteTest extends TestCase
 
     public function test_it_serves_a_declared_script_with_cache_headers_and_an_etag(): void
     {
-        $response = $this->get('/_plugin-assets/demo/app.js');
+        $url = $this->app->make(AssetRegistry::class)->url('demo', 'app.js');
+        $response = $this->get($url);
 
         $response->assertOk();
+        $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
         $this->assertStringContainsString('text/javascript', $response->headers->get('Content-Type'));
         $cache = $response->headers->get('Cache-Control');
         $this->assertStringContainsString('public', $cache);
         $this->assertStringContainsString('max-age=31536000', $cache);
         $this->assertStringContainsString('immutable', $cache);
         $this->assertNotEmpty($response->headers->get('ETag'));
+    }
+
+    public function test_an_unversioned_or_stale_url_is_not_cached_as_immutable(): void
+    {
+        foreach (['/_plugin-assets/demo/app.js', '/_plugin-assets/demo/app.js?v=stale'] as $url) {
+            $cache = $this->get($url)->assertOk()->headers->get('Cache-Control');
+            $this->assertStringNotContainsString('immutable', $cache);
+            $this->assertStringContainsString('no-cache', $cache);
+        }
     }
 
     public function test_it_serves_a_declared_stylesheet_as_css(): void

@@ -23,8 +23,15 @@ class AssetController
             'Content-Type' => str_ends_with($file, '.css') ? 'text/css; charset=utf-8' : 'text/javascript; charset=utf-8',
         ]);
 
-        $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');
-        $response->setEtag(hash_file('xxh128', $path));
+        $hash = hash_file('xxh128', $path);
+
+        // Only URLs carrying the current content hash are safe to cache forever;
+        // a bare or stale URL must revalidate via the ETag.
+        $versioned = hash_equals(substr($hash, 0, 12), (string) $request->query('v', ''));
+
+        $response->headers->set('Cache-Control', $versioned ? 'public, max-age=31536000, immutable' : 'no-cache');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->setEtag($hash);
         $response->isNotModified($request);
 
         return $response;
