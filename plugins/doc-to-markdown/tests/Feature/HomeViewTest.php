@@ -15,37 +15,28 @@ class HomeViewTest extends TestCase
         $response->assertSee('PDF conversion preserves text, not formatting');
     }
 
-    public function test_the_home_page_loads_the_published_markdown_bundle(): void
+    public function test_the_home_page_loads_the_bundle_through_the_core_asset_route(): void
     {
-        $response = $this->get(route('doc-to-markdown.home'));
+        if (! is_file(__DIR__.'/../../resources/dist/doc-to-markdown.js')) {
+            $this->markTestSkipped('The bundle is not built (npm run build --prefix plugins/doc-to-markdown).');
+        }
 
-        $response->assertOk();
-        $response->assertSee('vendor/doc-to-markdown/doc-to-markdown.js');
+        $html = $this->get(route('doc-to-markdown.home'))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression(
+            '~<script src="/_plugin-assets/doc-to-markdown/doc-to-markdown\.js\?v=[0-9a-f]{12}"></script>~',
+            $html,
+        );
+        $this->assertStringNotContainsString('vendor/doc-to-markdown', $html, 'The page must no longer reference a published copy.');
     }
 
-    public function test_the_bundle_url_is_cache_busted_by_the_published_files_contents(): void
+    public function test_the_page_still_renders_when_the_bundle_has_not_been_built(): void
     {
-        $this->publishBundle('// first build');
-
-        $first = $this->bundleUrlOnPage();
-
-        $this->assertStringContainsString('?id=', $first, 'Expected a cache-busting query on the bundle URL.');
-
-        // A rebuild with different contents must produce a different URL,
-        // otherwise browsers keep serving the previous bundle from cache.
-        $this->publishBundle('// second build, different contents');
-
-        $this->assertNotSame($first, $this->bundleUrlOnPage());
-    }
-
-    public function test_the_page_still_renders_when_the_bundle_has_not_been_published(): void
-    {
-        $this->app->usePublicPath($this->makePublicPath());
-
-        $response = $this->get(route('doc-to-markdown.home'));
-
-        $response->assertOk();
-        $response->assertSee('vendor/doc-to-markdown/doc-to-markdown.js');
+        // Core skips a declared-but-missing file instead of failing the page; the
+        // inline fallback then tells the user the script did not load.
+        $this->get(route('doc-to-markdown.home'))
+            ->assertOk()
+            ->assertSee('Drop a .docx or .pdf here');
     }
 
     public function test_the_markdown_preview_grows_with_its_content_instead_of_scrolling(): void
@@ -98,32 +89,5 @@ class HomeViewTest extends TestCase
         $this->assertStringContainsString('role="progressbar"', $html);
         $this->assertStringContainsString('role="alert"', $html);
         $this->assertStringContainsString('aria-live="polite"', $html);
-    }
-
-    private function makePublicPath(): string
-    {
-        $path = sys_get_temp_dir().'/d2m-public-'.bin2hex(random_bytes(6));
-        mkdir($path.'/vendor/doc-to-markdown', 0777, true);
-
-        return $path;
-    }
-
-    private function publishBundle(string $contents): void
-    {
-        $path = $this->makePublicPath();
-        file_put_contents($path.'/vendor/doc-to-markdown/doc-to-markdown.js', $contents);
-
-        $this->app->usePublicPath($path);
-    }
-
-    private function bundleUrlOnPage(): string
-    {
-        $html = $this->get(route('doc-to-markdown.home'))->assertOk()->getContent();
-
-        preg_match('~src="([^"]*vendor/doc-to-markdown/doc-to-markdown\.js[^"]*)"~', $html, $matches);
-
-        $this->assertNotEmpty($matches, 'Expected a script tag for the bundle.');
-
-        return $matches[1];
     }
 }

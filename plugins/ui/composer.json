@@ -6,7 +6,8 @@
     "license": "proprietary",
     "require": {
         "php": "^8.4",
-        "illuminate/support": "^13.0"
+        "illuminate/support": "^13.0",
+        "techysavvy/core": "*"
     },
     "autoload": {
         "psr-4": {
