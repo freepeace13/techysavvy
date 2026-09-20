@@ -21,6 +21,7 @@
         "techysavvy/core": "*",
         "techysavvy/doc-to-markdown": "*",
         "techysavvy/drop-share": "*",
+        "techysavvy/env-diff": "*",
         "techysavvy/hello-tool": "*",
         "techysavvy/photo-tweaker": "*",
         "techysavvy/ui": "*"

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5de3290e2e59caeb7a7667dfcf6d29a4",
+    "content-hash": "2afc62e9355fad2564c020fb7531eef1",
     "packages": [
         {
             "name": "brick/math",
@@ -6206,6 +6206,39 @@
                 }
             },
             "description": "Upload a file, get a phrase, share it — auto-deletes after expiry.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "techysavvy/env-diff",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "../plugins/env-diff",
+                "reference": "7cd8a79c21c3a704fd80b0efd3d45c379f5f9788"
+            },
+            "require": {
+                "illuminate/support": "^13.0",
+                "php": "^8.4",
+                "techysavvy/core": "*",
+                "techysavvy/ui": "*"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Techysavvy\\EnvDiff\\EnvDiffServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Techysavvy\\EnvDiff\\": "src/"
+                }
+            },
+            "description": "Compare .env files, spot drift and leaked secrets, and generate a clean .env.example — entirely in the browser.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
