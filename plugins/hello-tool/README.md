@@ -31,6 +31,24 @@ This symlinks the plugin into `host/vendor/` and runs `package:discover`, so
 None: no config, env vars, migrations or JS. Depends only on
 `techysavvy/core` and `techysavvy/ui`.
 
+## Assets
+
+This tool ships no CSS/JS of its own. A tool that does registers a prebuilt bundle
+with core in its `ServiceProvider::boot()` and requests it from its view:
+
+```php
+$this->app->make(\Techysavvy\Core\Assets\AssetRegistry::class)->register('hello-tool', new \Techysavvy\Core\Assets\AssetBundle(
+    directory: __DIR__.'/../resources/dist',
+    scripts: ['hello-tool.js'],
+));
+```
+
+```blade
+@pluginAssets('hello-tool')
+```
+
+See `plugins/core/README.md` for the full API.
+
 ## Layout
 
 ```

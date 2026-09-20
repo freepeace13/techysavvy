@@ -3,19 +3,9 @@
 
     $maxLabel = UploadLimit::label();
     $maxBytes = UploadLimit::kilobytes() * 1024;
-
-    // The published bundle lives at a stable, unhashed URL (unlike host/'s
-    // Vite output, which is content-hashed), so a rebuild would otherwise
-    // keep being served from browser cache. Fingerprint it by contents:
-    // the URL changes only when the bundle actually changes.
-    $bundle = 'vendor/doc-to-markdown/doc-to-markdown.js';
-    $bundlePath = public_path($bundle);
-    $bundleUrl = asset($bundle);
-
-    if (is_file($bundlePath)) {
-        $bundleUrl .= '?id='.substr(hash_file('xxh128', $bundlePath), 0, 12);
-    }
 @endphp
+
+@pluginAssets('doc-to-markdown')
 
 <x-ui::layout title="Doc to Markdown">
     <x-ui::page-header eyebrow="Convert &middot; docx &amp; pdf" title="Doc to Markdown">
@@ -144,10 +134,8 @@
     @endpush
 
     @push('scripts')
-        <script src="{{ $bundleUrl }}"></script>
-
         <script>
-            // If the bundle is missing (not built/published), fail visibly
+            // If the bundle is missing (not built), fail visibly
             // instead of leaving the page frozen.
             if (typeof window.docToMarkdown !== 'function') {
                 window.docToMarkdown = () => ({

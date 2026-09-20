@@ -31,8 +31,6 @@ from the repo root:
 ```bash
 npm install --prefix plugins/doc-to-markdown          # install markdown-it + vite
 npm run build --prefix plugins/doc-to-markdown        # -> resources/dist/doc-to-markdown.js
-cd host && php artisan vendor:publish \
-    --tag=doc-to-markdown-assets --force              # -> host/public/vendor/doc-to-markdown/
 ```
 
 Things worth knowing:
@@ -40,18 +38,13 @@ Things worth knowing:
 - **`resources/dist/` is generated and gitignored.** Never edit a file in
   it. The source of truth is `resources/js/doc-to-markdown.js`, which sets
   the one global the page depends on, `window.docToMarkdownRender`.
-- **Editing `resources/js/` requires a rebuild *and* a re-publish** before
-  the change shows up in the browser. Skipping either leaves the old bundle
-  in `host/public/vendor/` and the page looking unchanged.
-- **`--force` is not optional.** `vendor:publish` skips files that already
-  exist, so without it a rebuilt bundle never overwrites the published one.
-- **The `<script>` URL is fingerprinted** with a short hash of the published
-  file's contents (`?id=…`). The published path itself is stable and
-  unhashed, unlike `host/`'s Vite output, so without this a browser would
-  keep serving the previous bundle from cache after a rebuild. The hash
-  changes only when the bundle's bytes change.
-- The bundle is served as a static file from the host's public directory —
-  it does not go through a PHP route.
+- **Editing `resources/js/` requires only a rebuild.** Core's asset route reads
+  `resources/dist/` directly, so there is no publish step.
+- **The `<script>` URL is fingerprinted** by core (`/_plugin-assets/doc-to-markdown/doc-to-markdown.js?v=…`)
+  from the file's contents, so browsers refetch exactly when the bundle changes.
+- The plugin only *declares* the bundle (`AssetRegistry::register()` in its
+  service provider) and requests it with `@pluginAssets('doc-to-markdown')`;
+  serving and tag emission belong to `plugins/core`.
 - `host/`'s own Vite build knows nothing about this plugin, and must not:
   tool-specific logic never belongs in `host/`.
 
@@ -89,7 +82,7 @@ Things worth knowing:
   (`inter-`/`national` → `international`), which can occasionally drop the
   hyphen of a genuine compound split across lines.
 - The page's Alpine component lives in `resources/js/component.js` and ships
-  in the bundle; if the bundle isn't built and published (`make install`),
+  in the bundle; if the bundle isn't built (`make install`),
   the page shows an explicit "script failed to load" error.
 - This plugin's `routes/web.php` explicitly wraps its routes in Laravel's
   `web` middleware group. Routes registered via a plugin `ServiceProvider`'s

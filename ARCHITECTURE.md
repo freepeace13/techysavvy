@@ -118,6 +118,21 @@ is bootable on its own.
   its own namespace (e.g. `<plugin>::`); `ui`'s components are registered
   under one stable namespace (`ui::`) so both host and plugin views
   reference them identically.
+- **Plugin assets** — plugins never hand-roll `<script>`/`<link>` tags or
+  `vendor:publish` their own files. A plugin builds its CSS/JS itself (its own
+  Vite config; `host/`'s build never learns about it) and, in its
+  `ServiceProvider::boot()`, declares the built directory and file names with
+  `AssetRegistry::register('<name>', new AssetBundle(...))`. Core serves only
+  declared files at `GET /_plugin-assets/{bundle}/{file}` (ETag, immutable
+  cache, `?v=` content fingerprint in generated URLs), so a rebuild needs no
+  publish step. A page opts in with `@pluginAssets('<name>')`; the `ui` layout
+  emits the tags via `<x-core::assets.styles />` in `<head>` and
+  `<x-core::assets.scripts />` before `</body>`. Scripts are plain classic
+  tags (not `defer`) so they run before the layout's deferred Alpine start;
+  pass `['file.js' => ['module' => true]]` for an ES module. Which bundles a
+  request needs is tracked in the container-scoped `RequiredAssets`, separate
+  from the boot-time `AssetRegistry` so worker runtimes don't drop
+  registrations between requests.
 
 ## Testing philosophy
 

@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name') }}</title>
     @vite(config('ui.vite_entries'))
+    <x-core::assets.styles />
     @stack('styles')
 </head>
 <body class="min-h-screen bg-surface font-sans text-ink antialiased">
@@ -22,6 +23,7 @@
         {{ $slot }}
     </main>
 
+    <x-core::assets.scripts />
     @stack('scripts')
 </body>
 </html>

@@ -53,8 +53,10 @@ jobs:
       - name: Generate application key
         run: cd host && php artisan key:generate
 
-      - name: Publish plugin assets
-        run: cd host && php artisan vendor:publish --tag=doc-to-markdown-assets --force
-
       - name: Run tests
         run: cd host && php artisan test
+
+      - name: Run core plugin tests
+        run: |
+          composer install --working-dir=plugins/core --prefer-dist --no-progress
+          cd plugins/core && vendor/bin/phpunit

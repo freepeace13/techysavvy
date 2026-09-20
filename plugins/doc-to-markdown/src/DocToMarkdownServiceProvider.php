@@ -3,6 +3,8 @@
 namespace Techysavvy\DocToMarkdown;
 
 use Illuminate\Support\ServiceProvider;
+use Techysavvy\Core\Assets\AssetBundle;
+use Techysavvy\Core\Assets\AssetRegistry;
 use Techysavvy\Core\ToolRegistry;
 
 class DocToMarkdownServiceProvider extends ServiceProvider
@@ -16,10 +18,12 @@ class DocToMarkdownServiceProvider extends ServiceProvider
 
         $this->app->make(ToolRegistry::class)->register(new DocToMarkdownTool());
 
-        // The plugin builds its own JS (see package.json / vite.config.js) and
-        // ships the bundle as a static file from the host's public directory.
-        $this->publishes([
-            __DIR__.'/../resources/dist' => public_path('vendor/doc-to-markdown'),
-        ], 'doc-to-markdown-assets');
+        // The plugin builds its own JS (see package.json / vite.config.js); core serves
+        // the bundle straight from resources/dist and emits the tag for pages that
+        // call @pluginAssets('doc-to-markdown').
+        $this->app->make(AssetRegistry::class)->register('doc-to-markdown', new AssetBundle(
+            directory: __DIR__.'/../resources/dist',
+            scripts: ['doc-to-markdown.js'],
+        ));
     }
 }

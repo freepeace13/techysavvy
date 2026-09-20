@@ -6087,11 +6087,15 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/core",
-                "reference": "e3858d2735c73945709e5613e4bf3ea79d845c03"
+                "reference": "34cf063ea9338a7c0329b30956a21633aa4bfd52"
             },
             "require": {
                 "illuminate/support": "^13.0",
                 "php": "^8.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^11.2",
+                "phpunit/phpunit": "^12.5"
             },
             "type": "library",
             "extra": {
@@ -6104,6 +6108,11 @@
             "autoload": {
                 "psr-4": {
                     "Techysavvy\\Core\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Techysavvy\\Core\\Tests\\": "tests/"
                 }
             },
             "license": [
@@ -6241,13 +6250,17 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/photo-tweaker",
-                "reference": "d90393b75b50c93cb14dc5859f71fd829fa2a9cc"
+                "reference": "2374e24a5ebdf3d6586594d82e2e2ff0009d2312"
             },
             "require": {
                 "illuminate/support": "^13.0",
                 "php": "^8.4",
                 "techysavvy/core": "*",
                 "techysavvy/ui": "*"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^11.2",
+                "phpunit/phpunit": "^12.5"
             },
             "type": "library",
             "extra": {
@@ -6262,6 +6275,11 @@
                     "Techysavvy\\PhotoTweaker\\": "src/"
                 }
             },
+            "autoload-dev": {
+                "psr-4": {
+                    "Techysavvy\\PhotoTweaker\\Tests\\": "tests/"
+                }
+            },
             "description": "Crop, rotate, resize, and flip an uploaded image, then export it in a different format.",
             "transport-options": {
                 "symlink": true,
@@ -6274,11 +6292,12 @@
             "dist": {
                 "type": "path",
                 "url": "../plugins/ui",
-                "reference": "e781460d47be8c8b19c502c7332a25b2f2616319"
+                "reference": "f84eb5628cdf709b42b169a2a63b078a87af6346"
             },
             "require": {
                 "illuminate/support": "^13.0",
-                "php": "^8.4"
+                "php": "^8.4",
+                "techysavvy/core": "*"
             },
             "type": "library",
             "extra": {
