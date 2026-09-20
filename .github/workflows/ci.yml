@@ -53,8 +53,5 @@ jobs:
       - name: Generate application key
         run: cd host && php artisan key:generate
 
-      - name: Publish plugin assets
-        run: cd host && php artisan vendor:publish --tag=doc-to-markdown-assets --force
-
       - name: Run tests
         run: cd host && php artisan test
