@@ -30,4 +30,26 @@ class HomeViewTest extends TestCase
 
         $response->assertSee('That phrase is invalid or has expired.');
     }
+
+    public function test_home_page_requests_the_registered_bundle(): void
+    {
+        foreach (['drop-share.js', 'drop-share.css'] as $file) {
+            if (! is_file(__DIR__.'/../../resources/dist/'.$file)) {
+                $this->markTestSkipped('The bundle is not built (npm run build --prefix plugins/drop-share).');
+            }
+        }
+
+        $html = $this->get(route('drop-share.home'))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('~/_plugin-assets/drop-share/drop-share\\.js\?v=[0-9a-f]{12}~', $html);
+        $this->assertMatchesRegularExpression('~/_plugin-assets/drop-share/drop-share\\.css\?v=[0-9a-f]{12}~', $html);
+    }
+
+    public function test_home_page_has_no_inline_script_or_style_block(): void
+    {
+        $html = $this->get(route('drop-share.home'))->assertOk()->getContent();
+
+        $this->assertDoesNotMatchRegularExpression('~<script(?![^>]*\bsrc=)[^>]*>~i', $html);
+        $this->assertStringNotContainsString('<style', $html);
+    }
 }
