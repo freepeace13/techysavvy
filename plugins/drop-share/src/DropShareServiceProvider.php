@@ -7,6 +7,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Techysavvy\Core\Assets\AssetBundle;
+use Techysavvy\Core\Assets\AssetRegistry;
 use Techysavvy\Core\ToolRegistry;
 use Techysavvy\DropShare\Console\PruneExpiredFilesCommand;
 
@@ -21,6 +23,12 @@ class DropShareServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->app->make(ToolRegistry::class)->register(new DropShareTool());
+
+        $this->app->make(AssetRegistry::class)->register('drop-share', new AssetBundle(
+            directory: __DIR__.'/../resources/dist',
+            scripts: ['drop-share.js'],
+            styles: ['drop-share.css'],
+        ));
 
         RateLimiter::for('drop-share-uploads', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
         RateLimiter::for('drop-share-downloads', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));

@@ -1,0 +1,12 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "name": "techysavvy-drop-share",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "vite": "^8.0.0"
+    }
+}

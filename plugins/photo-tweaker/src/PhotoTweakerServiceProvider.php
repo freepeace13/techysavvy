@@ -3,6 +3,8 @@
 namespace Techysavvy\PhotoTweaker;
 
 use Illuminate\Support\ServiceProvider;
+use Techysavvy\Core\Assets\AssetBundle;
+use Techysavvy\Core\Assets\AssetRegistry;
 use Techysavvy\Core\ToolRegistry;
 
 class PhotoTweakerServiceProvider extends ServiceProvider
@@ -13,5 +15,11 @@ class PhotoTweakerServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'photo-tweaker');
 
         $this->app->make(ToolRegistry::class)->register(new PhotoTweaker());
+
+        $this->app->make(AssetRegistry::class)->register('photo-tweaker', new AssetBundle(
+            directory: __DIR__.'/../resources/dist',
+            scripts: ['photo-tweaker.js'],
+            styles: ['photo-tweaker.css'],
+        ));
     }
 }
