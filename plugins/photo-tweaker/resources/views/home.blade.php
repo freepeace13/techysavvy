@@ -6,7 +6,7 @@
 
     <div x-data="photoTweaker()" x-init="init()">
         <x-ui::panel eyebrow="Step 1" title="Upload an image" x-show="!image" x-cloak>
-            <x-ui::dropzone name="file" :required="false">
+            <x-ui::dropzone name="file" :required="false" accept="image/*" idle-expr="true">
                 <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 text-steel-300" aria-hidden="true">
                     <path d="M6 16 24 7l18 9-18 9-18-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                     <path d="M6 16v16l18 9 18-9V16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -19,11 +19,11 @@
                     <span class="truncate" x-text="file?.name"></span>
                 </x-slot:selected>
             </x-ui::dropzone>
-
-            <div x-show="errorMessage" x-cloak class="mt-4">
-                <x-ui::alert variant="error" x-text="errorMessage"></x-ui::alert>
-            </div>
         </x-ui::panel>
+
+        <div x-show="errorMessage" x-cloak class="mb-6">
+            <x-ui::alert variant="error" x-text="errorMessage"></x-ui::alert>
+        </div>
 
         <div x-show="image" x-cloak class="grid grid-cols-1 gap-6 md:grid-cols-3 md:items-start">
             {{-- Canvas + crop overlay -------------------------------------- --}}
@@ -151,6 +151,8 @@
                     cropping: false,
                     cropBox: null,
                     cropDragStart: null,
+                    canvasWidth: 0,
+                    canvasHeight: 0,
                     resizeWidth: 0,
                     resizeHeight: 0,
                     lockAspect: true,
@@ -158,8 +160,7 @@
                     exportQuality: 0.92,
 
                     get dimensionsLabel() {
-                        if (!this.$refs.canvas) return '';
-                        return `${this.$refs.canvas.width} × ${this.$refs.canvas.height}`;
+                        return this.canvasWidth ? `${this.canvasWidth} × ${this.canvasHeight}` : '';
                     },
 
                     init() {
@@ -213,8 +214,8 @@
                     },
 
                     syncResizeFieldsFromCanvas() {
-                        this.resizeWidth = this.$refs.canvas.width;
-                        this.resizeHeight = this.$refs.canvas.height;
+                        this.canvasWidth = this.resizeWidth = this.$refs.canvas.width;
+                        this.canvasHeight = this.resizeHeight = this.$refs.canvas.height;
                     },
 
                     rotate(degrees) {
@@ -353,9 +354,21 @@
                     },
 
                     download() {
-                        const canvas = this.$refs.canvas;
+                        let canvas = this.$refs.canvas;
                         const extension = this.exportFormat.split('/')[1].replace('jpeg', 'jpg');
                         const quality = this.exportFormat === 'image/png' ? undefined : this.exportQuality;
+
+                        if (this.exportFormat === 'image/jpeg') {
+                            // JPEG has no alpha channel; flatten onto white instead of black.
+                            const flat = document.createElement('canvas');
+                            flat.width = canvas.width;
+                            flat.height = canvas.height;
+                            const ctx = flat.getContext('2d');
+                            ctx.fillStyle = '#fff';
+                            ctx.fillRect(0, 0, flat.width, flat.height);
+                            ctx.drawImage(canvas, 0, 0);
+                            canvas = flat;
+                        }
 
                         canvas.toBlob((blob) => {
                             if (!blob) {
@@ -367,7 +380,7 @@
                             link.href = URL.createObjectURL(blob);
                             link.download = `photo-tweaker.${extension}`;
                             link.click();
-                            URL.revokeObjectURL(link.href);
+                            setTimeout(() => URL.revokeObjectURL(link.href), 1000);
                         }, this.exportFormat, quality);
                     },
 
