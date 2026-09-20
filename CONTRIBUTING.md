@@ -46,6 +46,31 @@ If you're planning a substantial new tool, please open an issue first using
 the "New tool proposal" template so the scope can be discussed before you
 invest time in a PR.
 
+## Plugin assets (CSS/JS)
+
+If a tool needs its own CSS or JS, don't hand-write `<script>`/`<link>` tags and
+don't `vendor:publish` files. Register them with core instead:
+
+1. Build the assets inside the plugin (its own Vite config; `host/`'s build never
+   learns about a tool), e.g. into `resources/dist/`.
+2. In the plugin's `ServiceProvider::boot()`, declare them:
+
+   ```php
+   $this->app->make(AssetRegistry::class)->register('my-tool', new AssetBundle(
+       directory: __DIR__.'/../resources/dist',
+       scripts: ['my-tool.js'],                    // ['x.js' => ['module' => true]] for an ES module
+       styles: ['my-tool.css'],
+   ));
+   ```
+
+3. In the tool's view, request the bundle: `@pluginAssets('my-tool')`.
+
+Core serves only declared files at `/_plugin-assets/{bundle}/{file}` with a
+content fingerprint and long-lived caching, so a rebuild is picked up with no
+publish step. Scripts are plain classic tags (not `defer`) so they run before the
+layout starts Alpine. Details: the "Plugin assets" entry in
+[`ARCHITECTURE.md`](ARCHITECTURE.md) and [`plugins/core/README.md`](plugins/core/README.md).
+
 ## Development setup
 
 ```sh

@@ -22,6 +22,7 @@ Full rationale and decisions: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 - Each `plugins/<name>/` folder is a standalone Composer package (own `composer.json`, own `ServiceProvider`), wired into `host/` via a Composer path repository (`../plugins/*`).
 - A plugin registers itself by implementing `Techysavvy\Core\ToolContract` (`icon()`, `name()`, `description()`, `url()`) and, in its own `ServiceProvider::boot()`, pushing an instance of that class into the `ToolRegistry` singleton.
 - `host/`'s home page reads `ToolRegistry::all()` and renders a card per tool — it never references a plugin's classes directly.
+- A tool that ships its own CSS/JS declares it with `AssetRegistry::register()` in its `ServiceProvider` and requests it from a view with `@pluginAssets('<name>')`; core serves and emits it (see `plugins/core/README.md`).
 - Branding and generic UI (layout shell, tool grid, tool card) live in `plugins/ui` and are consumed by `host/` and every plugin the same way.
 
 `plugins/hello-tool` is a working reference plugin — copy its shape when starting a new tool.
