@@ -95,6 +95,15 @@ Developers who are wiring up webhooks (Stripe, GitHub, Slack, their own services
 | Capture middleware | Outside `web` (no session/CSRF) | External senders have no CSRF token and need no cookies | user |
 | Manual delete | "Delete bin" button in v1 | Lets users clear captured secrets right away | user |
 | Frontend | Plain JS in a plugin Vite bundle, no framework | The job is small; matches the qr-forge bundle pattern | user |
+| Viewer wiring | The bundle exposes an Alpine component (`window.webhookInspector`), like qr-forge | Alpine is already loaded by the `ui` layout, and `<x-ui::tabs>` needs it; no new dependency | user |
+| Capture error bodies | 404 `{"error":"Bin not found."}`, 410 `{"error":"Bin expired."}`, 429 `{"error":"Too many requests."}` (JSON) | Senders and curl users get a readable reason, not an HTML error page | user |
+| CORS on capture | Capture responses send `Access-Control-Allow-Origin: *`; OPTIONS is still captured | Lets browser-based senders (`fetch` from another site) read the response | user |
+| Default selection | The newest request is auto-selected only while nothing is selected; new arrivals never steal an existing selection | Hands-free on first arrival without jumping away from what you're reading | user |
+| Viewer header info | Capture URL with copy button, request count, and "Expires in Xh Ym" | Users know how long their bin lives | user |
+| Delete bin | Native `confirm()` prompt ("Delete this bin and all captured requests?") before deleting | Irreversible action | user |
+| Copy body | Copies the raw body as received (not the pretty-printed one); disabled for binary bodies | Exact payload for reuse in tests | user |
+| Empty / truncated body | Shows "(empty body)"; a truncated body shows "Truncated: showing first 256 KB of N KB" above it | Makes the R5 flag visible | user |
+| List row | Method badge, path (with query), relative time ("12s ago"), and body size | Scannable at a glance | user |
 
 ## Success criteria
 - `curl -X POST -H 'Content-Type: application/json' -d '{"a":1}' <capture URL>` returns `{"ok":true}`, and the request shows up in an open viewer within about 3s with `{"a": 1}` pretty-printed.
