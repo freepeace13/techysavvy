@@ -16,6 +16,9 @@ Route::middleware('web')->group(function () {
 
     Route::get('/webhook-inspector/b/{viewToken}', [BinController::class, 'show'])
         ->name('webhook-inspector.bins.show');
+
+    Route::get('/webhook-inspector/b/{viewToken}/requests', [BinController::class, 'requests'])
+        ->name('webhook-inspector.bins.requests');
 });
 
 Route::any('/webhook-inspector/in/{binId}/{path?}', CaptureController::class)
