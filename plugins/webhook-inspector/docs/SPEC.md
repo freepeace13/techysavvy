@@ -1,6 +1,6 @@
 # Webhook Inspector — Spec
 
-Status: Approved
+Status: Built
 Plugin: `plugins/webhook-inspector` · Date: 2026-09-30
 
 ## Problem & audience
