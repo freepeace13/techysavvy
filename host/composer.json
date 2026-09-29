@@ -23,6 +23,7 @@
         "techysavvy/drop-share": "*",
         "techysavvy/hello-tool": "*",
         "techysavvy/photo-tweaker": "*",
+        "techysavvy/qr-forge": "*",
         "techysavvy/ui": "*"
     },
     "require-dev": {
