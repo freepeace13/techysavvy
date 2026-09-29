@@ -1,0 +1,43 @@
+{
+    "name": "techysavvy/qr-forge",
+    "description": "Turn any text or URL into a QR code you can download as PNG or SVG.",
+    "type": "library",
+    "version": "1.0.0",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^13.0",
+        "techysavvy/core": "*",
+        "techysavvy/ui": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.2",
+        "phpunit/phpunit": "^12.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Techysavvy\\QrForge\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Techysavvy\\QrForge\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techysavvy\\QrForge\\QrForgeServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

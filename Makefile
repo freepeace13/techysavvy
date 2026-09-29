@@ -9,6 +9,8 @@ install:
 	npm run build --prefix plugins/drop-share
 	npm install --prefix plugins/photo-tweaker
 	npm run build --prefix plugins/photo-tweaker
+	npm install --prefix plugins/qr-forge
+	npm run build --prefix plugins/qr-forge
 	npm install --prefix host
 
 serve:
