@@ -2,8 +2,10 @@
 
 namespace Techysavvy\WebhookInspector\Services;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Techysavvy\WebhookInspector\Models\Bin;
+use Techysavvy\WebhookInspector\Models\CapturedRequest;
 
 class BinService
 {
@@ -29,5 +31,25 @@ class BinService
     public function findByBinId(string $binId): ?Bin
     {
         return Bin::where('bin_id', $binId)->first();
+    }
+
+    public function capture(Bin $bin, Request $request, ?string $path): CapturedRequest
+    {
+        $raw = $request->getContent();
+
+        return $bin->requests()->create([
+            'method' => $request->method(),
+            'path' => '/'.ltrim((string) $path, '/'),
+            // Raw, as sent: getQueryString() re-sorts the parameters.
+            'query' => (string) $request->server('QUERY_STRING', ''),
+            'headers' => $request->headers->all(),
+            'body' => $raw === '' ? null : $raw,
+            'content_type' => $request->header('Content-Type'),
+            'body_size' => strlen($raw),
+            'truncated' => false,
+            'is_binary' => false,
+            'ip' => $request->ip(),
+            'received_at' => now(),
+        ]);
     }
 }
