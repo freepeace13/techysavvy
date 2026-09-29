@@ -22,4 +22,20 @@ class CaptureLimitsTest extends TestCase
 
         $this->assertSame(['body-3', 'body-4', 'body-5'], CapturedRequest::orderBy('id')->pluck('body')->all());
     }
+
+    public function test_capture_is_rate_limited_per_bin(): void
+    {
+        config(['webhook-inspector.capture_rate_per_minute' => 2]);
+        $bin = app(BinService::class)->create();
+        $other = app(BinService::class)->create();
+
+        $this->post("/webhook-inspector/in/{$bin->bin_id}")->assertOk();
+        $this->post("/webhook-inspector/in/{$bin->bin_id}")->assertOk();
+        $this->post("/webhook-inspector/in/{$bin->bin_id}")
+            ->assertStatus(429)
+            ->assertExactJson(['error' => 'Too many requests.']);
+        $this->post("/webhook-inspector/in/{$other->bin_id}")->assertOk();
+
+        $this->assertSame(2, $bin->requests()->count());
+    }
 }

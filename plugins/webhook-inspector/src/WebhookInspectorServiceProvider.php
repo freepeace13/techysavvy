@@ -23,5 +23,11 @@ class WebhookInspectorServiceProvider extends ServiceProvider
         RateLimiter::for('webhook-inspector-create', fn (Request $request) => Limit::perMinute(
             (int) config('webhook-inspector.create_rate_per_minute')
         )->by($request->ip()));
+
+        RateLimiter::for('webhook-inspector-capture', fn (Request $request) => Limit::perMinute(
+            (int) config('webhook-inspector.capture_rate_per_minute')
+        )->by('webhook-inspector-capture:'.$request->route('binId'))->response(
+            fn () => response()->json(['error' => 'Too many requests.'], 429)->header('Access-Control-Allow-Origin', '*')
+        ));
     }
 }

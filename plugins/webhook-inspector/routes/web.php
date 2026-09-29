@@ -20,4 +20,5 @@ Route::middleware('web')->group(function () {
 
 Route::any('/webhook-inspector/in/{binId}/{path?}', CaptureController::class)
     ->where('path', '.*')
-    ->name('webhook-inspector.capture');
+    ->name('webhook-inspector.capture')
+    ->middleware('throttle:webhook-inspector-capture');
