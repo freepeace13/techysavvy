@@ -10,7 +10,7 @@ Run against the branch diff (`git diff main...HEAD`). Each item is a finding if 
 | 4 | Provider declared in `extra.laravel.providers`; `host/config/app.php` untouched | read composer.json; diff |
 | 5 | No hand-written `<script src>`/`<link>` for the bundle, no inline `<script>`/`<style>` | `grep -rnE '<script|<link|<style' plugins/<kebab>/resources/views` |
 | 6 | Assets declared via `AssetRegistry` + `@pluginAssets`; plugin not in `host/vite.config.js`; no `vendor:publish` | read provider + view; `git diff main...HEAD -- host/vite.config.js` |
-| 7 | UI uses `<x-ui::...>` where a component exists; no copied ui markup | read views |
+| 7 | UI uses `<x-ui::...>` where a component exists; no copied ui markup; styling is Tailwind utilities + `ui` tokens, not custom CSS classes | read views; `grep -rn 'class="[a-z-]*-' plugins/<kebab>/resources/views` for plugin-named classes |
 | 8 | Plugin tests don't extend host's `Tests\TestCase`; host tests don't name this plugin | `grep -rn 'Tests\\TestCase' plugins/<kebab>/tests`; `grep -rn '<Name>' host/tests` |
 | 9 | Makefile + CI updated if the plugin has an npm build or its own phpunit suite | read diff of `Makefile`, `.github/workflows/ci.yml` |
 | 10 | README states current behavior; unbuilt items marked Planned; spec status updated | read |
