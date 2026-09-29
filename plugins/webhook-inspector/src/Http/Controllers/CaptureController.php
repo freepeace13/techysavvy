@@ -12,10 +12,22 @@ class CaptureController
     {
         $bin = $service->findByBinId($binId);
 
-        abort_unless($bin, 404);
+        if (! $bin) {
+            return $this->cors(response()->json(['error' => 'Bin not found.'], 404));
+        }
+
+        if ($bin->isExpired()) {
+            return $this->cors(response()->json(['error' => 'Bin expired.'], 410));
+        }
 
         $service->capture($bin, $request, $path);
 
-        return response()->json(['ok' => true])->header('Access-Control-Allow-Origin', '*');
+        return $this->cors(response()->json(['ok' => true]));
+    }
+
+    // Lets browser-based senders read the response.
+    private function cors(JsonResponse $response): JsonResponse
+    {
+        return $response->header('Access-Control-Allow-Origin', '*');
     }
 }

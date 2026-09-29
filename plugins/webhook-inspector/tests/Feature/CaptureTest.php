@@ -56,4 +56,26 @@ class CaptureTest extends TestCase
         $this->assertSame([], $response->headers->getCookies());
         $this->assertNotContains('web', app('router')->getRoutes()->getByName('webhook-inspector.capture')->gatherMiddleware());
     }
+
+    public function test_unknown_bin_is_404_and_stores_nothing(): void
+    {
+        $this->postJson('/webhook-inspector/in/nosuchbin0000000', ['a' => 1])
+            ->assertNotFound()
+            ->assertExactJson(['error' => 'Bin not found.'])
+            ->assertHeader('Access-Control-Allow-Origin', '*');
+
+        $this->assertDatabaseCount('webhook_inspector_requests', 0);
+    }
+
+    public function test_expired_bin_is_410_and_stores_nothing(): void
+    {
+        $bin = app(BinService::class)->create();
+        $bin->update(['expires_at' => now()->subSecond()]);
+
+        $this->postJson("/webhook-inspector/in/{$bin->bin_id}", ['a' => 1])
+            ->assertStatus(410)
+            ->assertExactJson(['error' => 'Bin expired.']);
+
+        $this->assertDatabaseCount('webhook_inspector_requests', 0);
+    }
 }
