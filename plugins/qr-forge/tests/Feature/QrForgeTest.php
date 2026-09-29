@@ -21,4 +21,31 @@ class QrForgeTest extends TestCase
             ->assertOk()
             ->assertSee('QR Forge');
     }
+
+    public function test_home_page_requests_the_registered_bundle(): void
+    {
+        if (! is_file(__DIR__.'/../../resources/dist/qr-forge.js')) {
+            $this->markTestSkipped('The bundle is not built (npm run build --prefix plugins/qr-forge).');
+        }
+
+        $html = $this->get(route('qr-forge.home'))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('~/_plugin-assets/qr-forge/qr-forge\\.js\?v=[0-9a-f]{12}~', $html);
+    }
+
+    public function test_home_page_has_no_inline_script_or_style_block(): void
+    {
+        $html = $this->get(route('qr-forge.home'))->assertOk()->getContent();
+
+        $this->assertDoesNotMatchRegularExpression('~<script(?![^>]*\bsrc=)[^>]*>~i', $html);
+        $this->assertStringNotContainsString('<style', $html);
+    }
+
+    public function test_home_page_mounts_the_generator(): void
+    {
+        $this->get(route('qr-forge.home'))
+            ->assertOk()
+            ->assertSee('x-data="qrForge()"', escape: false)
+            ->assertSee('accept="image/*"', escape: false);
+    }
 }

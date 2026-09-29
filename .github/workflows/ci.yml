@@ -35,6 +35,7 @@ jobs:
           npm install --prefix plugins/doc-to-markdown
           npm install --prefix plugins/drop-share
           npm install --prefix plugins/photo-tweaker
+          npm install --prefix plugins/qr-forge
           npm install --prefix host
 
       - name: Build frontend assets
@@ -48,9 +49,12 @@ jobs:
           npm run build --prefix plugins/doc-to-markdown
           npm run build --prefix plugins/drop-share
           npm run build --prefix plugins/photo-tweaker
+          npm run build --prefix plugins/qr-forge
 
       - name: Test plugin assets
-        run: npm test --prefix plugins/doc-to-markdown
+        run: |
+          npm test --prefix plugins/doc-to-markdown
+          npm test --prefix plugins/qr-forge
 
       - name: Copy environment file
         run: cp host/.env.example host/.env
@@ -65,3 +69,8 @@ jobs:
         run: |
           composer install --working-dir=plugins/core --prefer-dist --no-progress
           cd plugins/core && vendor/bin/phpunit
+
+      - name: Run qr-forge plugin tests
+        run: |
+          composer install --working-dir=plugins/qr-forge --prefer-dist --no-progress
+          cd plugins/qr-forge && vendor/bin/phpunit

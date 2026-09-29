@@ -39,12 +39,13 @@ QR Forge is a quick, private, free alternative inside techysavvy.
    byte mode so non-ASCII text encodes correctly.
 3. **Error correction** — `M` by default; `H` automatically whenever a logo
    is present.
-4. **Size** — preset PNG sizes (e.g. 256 / 512 / 1024 px) with a quiet zone of
+4. **Size** — preset PNG sizes (256 / 512 / 1024 / 2048 px) with a quiet zone of
    4 modules. SVG is resolution-independent and uses a `viewBox`.
 5. **Logo** — accepts `image/*`, read via `FileReader` (never uploaded),
-   drawn centered at ≤ ~20% of the code's width on a white padded backing, in
-   both the PNG and the SVG (embedded as a data URI). A "remove logo" control
-   restores level `M`.
+   drawn centered on a white margin covering ≤ 30% of the code's width, in
+   both the PNG and the SVG (embedded as a data URI). Short codes are bumped
+   to version 5 so the logo has room. A "remove logo" control restores
+   level `M`.
 6. **Export** — PNG from `<canvas>.toBlob()`, SVG from a generated string;
    both downloaded with a filename like `qr-forge.png` / `qr-forge.svg`.
 7. **UI** — built from `<x-ui::...>` components (`page-header`, `panel`,
@@ -73,10 +74,13 @@ or third-party calls.
 Layout: input panel (text, size, logo) beside a preview panel (live code +
 two download buttons); stacks vertically on narrow screens.
 
-## Open questions
+## Decisions
 
-- Exact PNG size presets, or a free-form number input with bounds?
-- Should the logo size be adjustable, or fixed at a safe ratio?
+- PNG sizes are presets (256–2048 px), not free-form input.
+- Logo size is fixed at a safe ratio (≤ 30% of the width at level H), not
+  user-adjustable.
+- `jsqr` is a dev dependency only: tests decode rendered output to prove the
+  codes scan.
 
 ## Success criteria
 
@@ -87,18 +91,16 @@ two download buttons); stacks vertically on narrow screens.
 
 ## Milestones
 
-1. **Front-end scaffold** — add `package.json` (`qrcode-generator`, `vite`),
-   `vite.config.js` (copy `photo-tweaker`'s), `resources/js/qr-forge.js`;
-   register the bundle via `AssetRegistry` in the service provider, request it
-   with `@pluginAssets('qr-forge')`, add the build to the root `Makefile`
-   `install` target. Add feature tests for bundle requests and "no inline
-   script/style" (mirroring `PhotoTweakerTest`).
-2. **Pure QR module** — a small ES module that turns `(text, ecLevel)` into
-   a module matrix, and matrix → SVG string; unit-test it with `node --test`.
-3. **Live preview + text input** — Alpine component, debounced rendering,
-   empty and over-capacity states.
-4. **PNG & SVG export** — canvas renderer with size presets; downloads.
-5. **Center logo** — dropzone, `FileReader`, auto level H, overlay in both
-   renderers, remove control.
-6. **Polish & verify** — responsive layout, scan-test the outputs, update the
-   README status from Skeleton to done.
+All v1 milestones are done:
+
+1. ~~Front-end scaffold~~ — Vite bundle registered via `AssetRegistry`,
+   `make install` and CI build/test it.
+2. ~~Pure QR module~~ — `resources/js/qr.js`, tested by decoding output.
+3. ~~Live preview + text input~~ — `resources/js/component.js`.
+4. ~~PNG & SVG export~~.
+5. ~~Center logo~~.
+6. ~~Polish & verify~~ — decoded real Chromium downloads (PNG + SVG, with and
+   without a logo, UTF-8 input).
+
+Backlog (out of v1 scope): Wi-Fi/vCard presets, custom colors, manual
+error-correction choice.
