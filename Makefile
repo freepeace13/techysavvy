@@ -11,6 +11,8 @@ install:
 	npm run build --prefix plugins/photo-tweaker
 	npm install --prefix plugins/qr-forge
 	npm run build --prefix plugins/qr-forge
+	npm install --prefix plugins/webhook-inspector
+	npm run build --prefix plugins/webhook-inspector
 	npm install --prefix host
 
 serve:
