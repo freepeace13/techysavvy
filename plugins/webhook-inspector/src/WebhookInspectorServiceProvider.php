@@ -3,10 +3,12 @@
 namespace Techysavvy\WebhookInspector;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Techysavvy\Core\ToolRegistry;
+use Techysavvy\WebhookInspector\Console\PruneExpiredBinsCommand;
 
 class WebhookInspectorServiceProvider extends ServiceProvider
 {
@@ -29,5 +31,17 @@ class WebhookInspectorServiceProvider extends ServiceProvider
         )->by('webhook-inspector-capture:'.$request->route('binId'))->response(
             fn () => response()->json(['error' => 'Too many requests.'], 429)->header('Access-Control-Allow-Origin', '*')
         ));
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([PruneExpiredBinsCommand::class]);
+        }
+
+        $this->app->booted(function () {
+            $interval = max(1, (int) config('webhook-inspector.prune_interval_minutes'));
+
+            $this->app->make(Schedule::class)
+                ->command(PruneExpiredBinsCommand::class)
+                ->cron("*/{$interval} * * * *");
+        });
     }
 }

@@ -91,4 +91,10 @@ class BinService
             $bin->update(['expires_at' => now()]);
         });
     }
+
+    // Requests go with their bin via the foreign key's cascade.
+    public function pruneExpired(): int
+    {
+        return Bin::where('expires_at', '<=', now())->delete();
+    }
 }
