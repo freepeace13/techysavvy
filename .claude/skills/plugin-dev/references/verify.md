@@ -4,7 +4,7 @@ Run these and read the output before claiming any task, plan, or plugin is done.
 
 Fresh checkout/worktree first (otherwise tests fail on `APP_KEY` / `ViteManifestNotFoundException` for reasons unrelated to the plugin):
 ```
-cd host && cp .env.example .env && php artisan key:generate
+cd host && [ -f .env ] || (cp .env.example .env && php artisan key:generate)   # never overwrite an existing .env
 npm install --prefix host && npm run build --prefix host
 ```
 

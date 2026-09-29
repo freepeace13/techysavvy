@@ -29,7 +29,7 @@ Fill `spec-template.md` (this folder). Every section present; write "None" rathe
 3. **Shape.** One topic per round, 1-4 questions, multiple choice, recommendation first. Topics are the template's sections; skip what's answered.
    - **User in a hurry / "I know what I want":** collapse to ONE round: name choices + your proposed defaults for every open decision. Fewer rounds — not fewer sections, and not no file.
 4. **Write the file** with `Status: Draft`. Every decision goes in the Decisions table with its source: `user` (they chose it) or `proposed` (your default).
-5. **Approval gate.** Show the path and a ≤10-line summary, listing every `proposed` decision explicitly. Ask for approval of the file. On approval: set `Status: Approved`, flip confirmed rows to `user`, commit (`docs(<kebab>): add spec` / `docs(<kebab>): spec <feature>`).
+5. **Approval gate.** Before the first commit, `git switch -c feat/<kebab>` (new plugin) or `feat/<kebab>-<feature>` from `main` — spec, plan and code all live on this branch. Show the path and a ≤10-line summary, listing every `proposed` decision explicitly. Ask for approval of the file. On approval: set `Status: Approved`, flip confirmed rows to `user`, commit (`docs(<kebab>): add spec` / `docs(<kebab>): spec <feature>`).
 6. **Hand off.** Next phase is `plugin-plan`. Don't scaffold or implement from here.
 
 ## The gate
