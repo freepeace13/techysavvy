@@ -19,10 +19,13 @@ class BinController
     {
         $bin = $service->findByViewToken($viewToken);
 
-        return view('webhook-inspector::show', [
+        $expired = $bin->isExpired();
+
+        return response()->view('webhook-inspector::show', [
             'bin' => $bin,
             'captureUrl' => route('webhook-inspector.capture', $bin->bin_id),
-        ]);
+            'expired' => $expired,
+        ], $expired ? 410 : 200);
     }
 
     public function requests(Request $request, string $viewToken, BinService $service)
