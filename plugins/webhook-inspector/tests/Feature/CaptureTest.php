@@ -13,6 +13,7 @@ class CaptureTest extends TestCase
 
     public function test_it_stores_method_path_query_headers_and_body(): void
     {
+        $this->freezeSecond();
         $bin = app(BinService::class)->create();
 
         $this->call('POST', "/webhook-inspector/in/{$bin->bin_id}/hooks/stripe?b=2&a=1", [], [], [],
@@ -32,6 +33,8 @@ class CaptureTest extends TestCase
         $this->assertSame(7, $captured->body_size);
         $this->assertFalse($captured->truncated);
         $this->assertFalse($captured->is_binary);
+        $this->assertSame('127.0.0.1', $captured->ip);
+        $this->assertTrue($captured->received_at->equalTo(now()));
     }
 
     public function test_it_accepts_every_method(): void

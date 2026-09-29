@@ -33,7 +33,8 @@ class CaptureLimitsTest extends TestCase
         $this->post("/webhook-inspector/in/{$bin->bin_id}")->assertOk();
         $this->post("/webhook-inspector/in/{$bin->bin_id}")
             ->assertStatus(429)
-            ->assertExactJson(['error' => 'Too many requests.']);
+            ->assertExactJson(['error' => 'Too many requests.'])
+            ->assertHeader('Access-Control-Allow-Origin', '*');
         $this->post("/webhook-inspector/in/{$other->bin_id}")->assertOk();
 
         $this->assertSame(2, $bin->requests()->count());
