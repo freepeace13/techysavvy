@@ -60,3 +60,10 @@ export function headerRows(headers) {
         .sort()
         .flatMap((name) => headers[name].map((value) => [name, value]));
 }
+
+// Union by id, newest first, capped like the server's per-bin limit.
+export function mergeRequests(existing, incoming, max) {
+    const byId = new Map(existing.map((req) => [req.id, req]));
+    incoming.forEach((req) => byId.set(req.id, req));
+    return [...byId.values()].sort((a, b) => b.id - a.id).slice(0, max);
+}
