@@ -74,3 +74,8 @@ jobs:
         run: |
           composer install --working-dir=plugins/qr-forge --prefer-dist --no-progress
           cd plugins/qr-forge && vendor/bin/phpunit
+
+      - name: Run webhook-inspector plugin tests
+        run: |
+          composer install --working-dir=plugins/webhook-inspector --prefer-dist --no-progress
+          cd plugins/webhook-inspector && vendor/bin/phpunit
