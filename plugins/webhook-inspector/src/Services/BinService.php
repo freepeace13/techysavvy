@@ -3,6 +3,7 @@
 namespace Techysavvy\WebhookInspector\Services;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Techysavvy\WebhookInspector\Models\Bin;
 use Techysavvy\WebhookInspector\Models\CapturedRequest;
@@ -45,19 +46,39 @@ class BinService
             ? ($isBinary ? substr($raw, 0, $max) : mb_strcut($raw, 0, $max, 'UTF-8'))
             : $raw;
 
-        return $bin->requests()->create([
-            'method' => $request->method(),
-            'path' => '/'.ltrim((string) $path, '/'),
-            // Raw, as sent: getQueryString() re-sorts the parameters.
-            'query' => (string) $request->server('QUERY_STRING', ''),
-            'headers' => $request->headers->all(),
-            'body' => $raw === '' ? null : ($isBinary ? base64_encode($stored) : $stored),
-            'content_type' => $request->header('Content-Type'),
-            'body_size' => strlen($raw),
-            'truncated' => $truncated,
-            'is_binary' => $isBinary,
-            'ip' => $request->ip(),
-            'received_at' => now(),
-        ]);
+        return DB::transaction(function () use ($bin, $request, $path, $raw, $stored, $truncated, $isBinary) {
+            $captured = $bin->requests()->create([
+                'method' => $request->method(),
+                'path' => '/'.ltrim((string) $path, '/'),
+                // Raw, as sent: getQueryString() re-sorts the parameters.
+                'query' => (string) $request->server('QUERY_STRING', ''),
+                'headers' => $request->headers->all(),
+                'body' => $raw === '' ? null : ($isBinary ? base64_encode($stored) : $stored),
+                'content_type' => $request->header('Content-Type'),
+                'body_size' => strlen($raw),
+                'truncated' => $truncated,
+                'is_binary' => $isBinary,
+                'ip' => $request->ip(),
+                'received_at' => now(),
+            ]);
+
+            $this->dropOverflow($bin);
+
+            return $captured;
+        });
+    }
+
+    // Keeps only the newest max_requests_per_bin requests.
+    private function dropOverflow(Bin $bin): void
+    {
+        $ids = $bin->requests()
+            ->orderByDesc('id')
+            ->skip((int) config('webhook-inspector.max_requests_per_bin'))
+            ->take(PHP_INT_MAX)
+            ->pluck('id');
+
+        if ($ids->isNotEmpty()) {
+            CapturedRequest::whereIn('id', $ids)->delete();
+        }
     }
 }
