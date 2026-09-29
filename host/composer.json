@@ -24,7 +24,8 @@
         "techysavvy/hello-tool": "*",
         "techysavvy/photo-tweaker": "*",
         "techysavvy/qr-forge": "*",
-        "techysavvy/ui": "*"
+        "techysavvy/ui": "*",
+        "techysavvy/webhook-inspector": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

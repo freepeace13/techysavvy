@@ -36,6 +36,7 @@ jobs:
           npm install --prefix plugins/drop-share
           npm install --prefix plugins/photo-tweaker
           npm install --prefix plugins/qr-forge
+          npm install --prefix plugins/webhook-inspector
           npm install --prefix host
 
       - name: Build frontend assets
@@ -50,11 +51,13 @@ jobs:
           npm run build --prefix plugins/drop-share
           npm run build --prefix plugins/photo-tweaker
           npm run build --prefix plugins/qr-forge
+          npm run build --prefix plugins/webhook-inspector
 
       - name: Test plugin assets
         run: |
           npm test --prefix plugins/doc-to-markdown
           npm test --prefix plugins/qr-forge
+          npm test --prefix plugins/webhook-inspector
 
       - name: Copy environment file
         run: cp host/.env.example host/.env
@@ -74,3 +77,8 @@ jobs:
         run: |
           composer install --working-dir=plugins/qr-forge --prefer-dist --no-progress
           cd plugins/qr-forge && vendor/bin/phpunit
+
+      - name: Run webhook-inspector plugin tests
+        run: |
+          composer install --working-dir=plugins/webhook-inspector --prefer-dist --no-progress
+          cd plugins/webhook-inspector && vendor/bin/phpunit
