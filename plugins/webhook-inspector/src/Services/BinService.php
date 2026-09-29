@@ -81,4 +81,14 @@ class BinService
             CapturedRequest::whereIn('id', $ids)->delete();
         }
     }
+
+    // Keeps the row as an expired tombstone so the capture URL answers 410
+    // (not 404) until the prune command removes it.
+    public function delete(Bin $bin): void
+    {
+        DB::transaction(function () use ($bin) {
+            $bin->requests()->delete();
+            $bin->update(['expires_at' => now()]);
+        });
+    }
 }

@@ -53,4 +53,11 @@ class BinController
                 ]),
         ];
     }
+
+    public function destroy(string $viewToken, BinService $service)
+    {
+        $service->delete($service->findByViewToken($viewToken));
+
+        return redirect()->route('webhook-inspector.home');
+    }
 }
