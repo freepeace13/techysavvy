@@ -24,6 +24,6 @@ contract.
 - The host's `ToolListingTest` passes with it installed and without it.
 
 ## Maintenance
-Keep it in sync with the `create-plugin` skill: when the recommended plugin
+Keep it in sync with `.claude/skills/plugin-dev/references/scaffold-recipe.md`: when the recommended plugin
 shape changes (PHP version, component usage, file layout), update this
 plugin in the same change.

@@ -4,7 +4,7 @@ Demo tool plugin and the **reference implementation** for the plugin folder
 shape. It does nothing useful on purpose: it proves a tool can register
 itself with the `ToolRegistry`, show up as a card on the host home page and
 serve its own page. Copy its shape when scaffolding a new tool (see the
-`create-plugin` skill and the repo root `CLAUDE.md`).
+`plugin-dev` skill's scaffold recipe and the repo root `CLAUDE.md`).
 
 **Status: complete.** It is intentionally a skeleton and will not grow
 features.
