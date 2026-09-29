@@ -36,6 +36,14 @@ class BinService
     public function capture(Bin $bin, Request $request, ?string $path): CapturedRequest
     {
         $raw = $request->getContent();
+        $max = (int) config('webhook-inspector.max_body_kb') * 1024;
+        $isBinary = ! mb_check_encoding($raw, 'UTF-8');
+        $truncated = strlen($raw) > $max;
+
+        // Cut text on a character boundary so the stored body stays valid UTF-8.
+        $stored = $truncated
+            ? ($isBinary ? substr($raw, 0, $max) : mb_strcut($raw, 0, $max, 'UTF-8'))
+            : $raw;
 
         return $bin->requests()->create([
             'method' => $request->method(),
@@ -43,11 +51,11 @@ class BinService
             // Raw, as sent: getQueryString() re-sorts the parameters.
             'query' => (string) $request->server('QUERY_STRING', ''),
             'headers' => $request->headers->all(),
-            'body' => $raw === '' ? null : $raw,
+            'body' => $raw === '' ? null : ($isBinary ? base64_encode($stored) : $stored),
             'content_type' => $request->header('Content-Type'),
             'body_size' => strlen($raw),
-            'truncated' => false,
-            'is_binary' => false,
+            'truncated' => $truncated,
+            'is_binary' => $isBinary,
             'ip' => $request->ip(),
             'received_at' => now(),
         ]);
