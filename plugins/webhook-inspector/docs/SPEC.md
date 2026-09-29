@@ -97,7 +97,7 @@ Developers who are wiring up webhooks (Stripe, GitHub, Slack, their own services
 | Frontend | Plain JS in a plugin Vite bundle, no framework | The job is small; matches the qr-forge bundle pattern | user |
 | Viewer wiring | The bundle exposes an Alpine component (`window.webhookInspector`), like qr-forge | Alpine is already loaded by the `ui` layout, and `<x-ui::tabs>` needs it; no new dependency | user |
 | Capture error bodies | 404 `{"error":"Bin not found."}`, 410 `{"error":"Bin expired."}`, 429 `{"error":"Too many requests."}` (JSON) | Senders and curl users get a readable reason, not an HTML error page | user |
-| CORS on capture | Capture responses send `Access-Control-Allow-Origin: *`; OPTIONS is still captured | Lets browser-based senders (`fetch` from another site) read the response | user |
+| CORS on capture | Capture responses send `Access-Control-Allow-Origin: *`, `Access-Control-Allow-Methods: *` and `Access-Control-Allow-Headers: *`; OPTIONS is still captured | Lets browser-based senders (`fetch` from another site, including JSON/custom-header requests that preflight) reach the bin and read the response. Methods/Headers added at review. | user |
 | Default selection | The newest request is auto-selected only while nothing is selected; new arrivals never steal an existing selection | Hands-free on first arrival without jumping away from what you're reading | user |
 | Viewer header info | Capture URL with copy button, request count, and "Expires in Xh Ym" | Users know how long their bin lives | user |
 | Delete bin | Native `confirm()` prompt ("Delete this bin and all captured requests?") before deleting | Irreversible action | user |

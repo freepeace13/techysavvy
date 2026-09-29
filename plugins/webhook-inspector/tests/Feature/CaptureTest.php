@@ -81,4 +81,21 @@ class CaptureTest extends TestCase
 
         $this->assertDatabaseCount('webhook_inspector_requests', 0);
     }
+
+    public function test_preflight_is_captured_and_allows_any_method_and_header(): void
+    {
+        $bin = app(BinService::class)->create();
+
+        $this->call('OPTIONS', "/webhook-inspector/in/{$bin->bin_id}", [], [], [], [
+            'HTTP_ORIGIN' => 'https://example.com',
+            'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'POST',
+            'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' => 'content-type,x-signature',
+        ])
+            ->assertOk()
+            ->assertHeader('Access-Control-Allow-Origin', '*')
+            ->assertHeader('Access-Control-Allow-Methods', '*')
+            ->assertHeader('Access-Control-Allow-Headers', '*');
+
+        $this->assertSame('OPTIONS', CapturedRequest::sole()->method);
+    }
 }

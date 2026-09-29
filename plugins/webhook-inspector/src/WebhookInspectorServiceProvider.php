@@ -11,6 +11,7 @@ use Techysavvy\Core\Assets\AssetBundle;
 use Techysavvy\Core\Assets\AssetRegistry;
 use Techysavvy\Core\ToolRegistry;
 use Techysavvy\WebhookInspector\Console\PruneExpiredBinsCommand;
+use Techysavvy\WebhookInspector\Http\Controllers\CaptureController;
 
 class WebhookInspectorServiceProvider extends ServiceProvider
 {
@@ -36,7 +37,7 @@ class WebhookInspectorServiceProvider extends ServiceProvider
         RateLimiter::for('webhook-inspector-capture', fn (Request $request) => Limit::perMinute(
             (int) config('webhook-inspector.capture_rate_per_minute')
         )->by('webhook-inspector-capture:'.$request->route('binId'))->response(
-            fn () => response()->json(['error' => 'Too many requests.'], 429)->header('Access-Control-Allow-Origin', '*')
+            fn () => CaptureController::withCors(response()->json(['error' => 'Too many requests.'], 429))
         ));
 
         if ($this->app->runningInConsole()) {

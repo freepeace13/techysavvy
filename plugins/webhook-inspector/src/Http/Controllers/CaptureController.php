@@ -13,21 +13,26 @@ class CaptureController
         $bin = $service->findByBinId($binId);
 
         if (! $bin) {
-            return $this->cors(response()->json(['error' => 'Bin not found.'], 404));
+            return self::withCors(response()->json(['error' => 'Bin not found.'], 404));
         }
 
         if ($bin->isExpired()) {
-            return $this->cors(response()->json(['error' => 'Bin expired.'], 410));
+            return self::withCors(response()->json(['error' => 'Bin expired.'], 410));
         }
 
         $service->capture($bin, $request, $path);
 
-        return $this->cors(response()->json(['ok' => true]));
+        return self::withCors(response()->json(['ok' => true]));
     }
 
-    // Lets browser-based senders read the response.
-    private function cors(JsonResponse $response): JsonResponse
+    // Lets browser-based senders, including preflighted ones, reach the bin
+    // and read the response. Also used for the capture rate limiter's 429.
+    public static function withCors(JsonResponse $response): JsonResponse
     {
-        return $response->header('Access-Control-Allow-Origin', '*');
+        return $response->withHeaders([
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => '*',
+            'Access-Control-Allow-Headers' => '*',
+        ]);
     }
 }
