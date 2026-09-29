@@ -39,8 +39,8 @@ contributors alike, and reviewers will ask for changes that violate them.
 `plugins/hello-tool` is a working reference implementation — copy its shape
 (`composer.json`, `ServiceProvider`, `ToolContract` implementation, routes,
 views) when scaffolding a new tool. If you're using Claude Code, the
-`create-plugin` skill automates this scaffolding and the `host/composer.json`
-wiring.
+`plugin-dev` skills take a tool from idea to PR in four phases (spec, plan,
+execute, review); start with `.claude/skills/plugin-dev/SKILL.md`.
 
 If you're planning a substantial new tool, please open an issue first using
 the "New tool proposal" template so the scope can be discussed before you
